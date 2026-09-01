@@ -148,6 +148,8 @@ node .check/smoke.mjs     # the tagger, 42 checks
 node .check/finder.mjs    # the finder, 13 checks
 node .check/cloud.mjs     # the cloud paths, 52 checks against a fake Supabase
 node .check/browser.mjs   # what Edge/Chrome actually paint, 19 checks
+node .check/pages.mjs     # page N really holds session N, sampled
+node .check/open-page.mjs # click a result on the live site, 15 checks
 node .check/live.mjs      # 25 checks against the real project — needs .env
 ```
 
