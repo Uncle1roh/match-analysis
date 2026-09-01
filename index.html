@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Match Analysis — video tagger &amp; session finder</title>
+<link rel="icon" href="/favicon.svg">
+<meta name="description" content="Tag a match from video, count what you tagged, and let the count choose the training session.">
+<style>
+:root{
+  --paper:#E9EDE9; --line:#C3CCC5; --ink:#101A16; --ink-2:#40514A; --ink-3:#7A8A82;
+  --card:#FFF; --chalk:#F7F9F7; --rule:#D6DDD8; --hit:#12463A; --sig:#C2582F;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --cond:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--cond);
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:28px 28px;background-position:-1px -1px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 22px 90px}
+header{padding:64px 0 26px;border-bottom:2px solid var(--ink)}
+h1{font-size:clamp(34px,6vw,58px);line-height:1.02;margin:0;font-weight:800;text-transform:uppercase;letter-spacing:-1px}
+h1 em{font-style:normal;font-weight:300;color:var(--ink-2);display:block}
+.sub{font:11px/1.7 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-top:14px}
+.chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:26px 0 0;font:11px var(--mono);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.chain b{color:var(--ink);font-weight:400;background:var(--card);border:1px solid var(--rule);padding:8px 11px;border-radius:2px}
+.chain span{color:var(--sig)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
+.card{background:var(--card);border:1px solid var(--rule);border-top:4px solid var(--ink);padding:26px;display:flex;flex-direction:column}
+.card h2{margin:0 0 4px;font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:-.3px}
+.card .k{font:10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px}
+.card p{margin:0 0 16px;color:var(--ink-2);font-size:15px}
+.card ul{margin:0 0 22px;padding-left:18px;color:var(--ink-2);font-size:14px}
+.card li{margin-bottom:5px}
+.card .go{margin-top:auto}
+a.btn{display:inline-block;font:11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  background:var(--ink);color:var(--paper);text-decoration:none;padding:15px 22px;border-radius:2px}
+a.btn:hover{background:var(--hit)}
+a.btn.g{background:none;border:1px solid var(--rule);color:var(--ink-2)}
+a.btn.g:hover{background:var(--chalk);color:var(--ink)}
+h3{font-size:13px;font:11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--rule)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:34px}
+.two p{margin:0 0 12px;font-size:15px;color:var(--ink-2)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:6px 8px 6px 0;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+td:first-child{width:96px}
+kbd{font:10px var(--mono);border:1px solid var(--rule);padding:3px 6px;background:var(--card);border-radius:2px;color:var(--ink)}
+.note{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--sig);padding:18px 20px;margin-top:22px;font-size:14px;color:var(--ink-2)}
+.note b{color:var(--ink)}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--rule);font:11px/1.9 var(--mono);color:var(--ink-3)}
+@media(max-width:780px){.cards,.two{grid-template-columns:1fr}header{padding-top:40px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Match analysis<em>video in, training out</em></h1>
+  <div class="sub">Tag the match &middot; count what you tagged &middot; let the count choose the session</div>
+  <div class="chain">
+    <b>video</b><span>&rarr;</span><b>clips</b><span>&rarr;</span><b>tally</b><span>&rarr;</span>
+    <b>findings</b><span>&rarr;</span><b>session</b><span>&rarr;</span><b>next match</b>
+  </div>
+</header>
+
+<div class="cards">
+  <div class="card">
+    <h2>Video tagger</h2>
+    <div class="k">telestration &amp; match coding</div>
+    <p>Load a match, draw on it, and tag what happens in the same vocabulary the training bank uses.</p>
+    <ul>
+      <li>Circles that sit on the grass — calibrated to your camera in two drags</li>
+      <li>Link players, mark zones, save telestrated frames as PNG</li>
+      <li>Sticky context: set who / phase / moment once, pick themes, tag</li>
+      <li>Exports a finished match note with the tally already counted</li>
+    </ul>
+    <div class="go"><a class="btn" href="/tagger.html">Open the tagger</a></div>
+  </div>
+
+  <div class="card">
+    <h2>Session finder</h2>
+    <div class="k">617 sessions, indexed</div>
+    <p>Six questions turn a finding from the report into a shortlist of sessions, each pointing at its page.</p>
+    <ul>
+      <li>Filter by moment, phase, theme, level, microcycle day, squad size</li>
+      <li>Ranked by match score, not by keyword luck</li>
+      <li>Choose your own PDF and every result opens its real page</li>
+      <li>Any view is a link you can send someone</li>
+    </ul>
+    <div class="go"><a class="btn g" href="/finder.html">Open the finder</a></div>
+  </div>
+</div>
+
+<h3>Nothing you load ever leaves your machine</h3>
+<div class="two">
+  <div>
+    <p>Both tools run entirely in the browser. The match video, the session PDF and every drawing are read from your own disk and stay there — there is no server, no account, and no upload.</p>
+    <p>The flip side: closing the tab loses your work. Use <b>Save</b> in the tagger before you close, and <b>Load</b> to pick up where you left off.</p>
+  </div>
+  <div>
+    <p style="font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px">Tagger shortcuts</p>
+    <table>
+      <tr><td><kbd>space</kbd></td><td>play / pause</td></tr>
+      <tr><td><kbd>J</kbd> <kbd>L</kbd></td><td>skip 3s back / forward</td></tr>
+      <tr><td><kbd>U</kbd> <kbd>T</kbd></td><td>us / them</td></tr>
+      <tr><td><kbd>1</kbd>–<kbd>4</kbd></td><td>moment</td></tr>
+      <tr><td><kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd></td><td>worked / broke / neutral</td></tr>
+      <tr><td><kbd>V</kbd> <kbd>K</kbd> <kbd>C</kbd> <kbd>R</kbd></td><td>select / link / ring / arrow</td></tr>
+      <tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>previous / next clip</td></tr>
+      <tr><td><kbd>⏎</kbd></td><td>tag the moment</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="note">
+  <b>Before you share this address.</b> The tagger is yours and safe to pass around. The finder's index carries session
+  titles and objectives from the MBP course, so treat that page as something for people who already own the material —
+  and never put the PDF itself on the site. Each person points the finder at their own copy.
+</div>
+
+<footer>
+  Built around one idea: a behaviour counts once you have seen it three times.<br>
+  Session content &copy; MBP School of Coaches. Everything else is yours.
+</footer>
+</div>
+</body></html>

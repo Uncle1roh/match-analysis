@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Tagger — telestration &amp; match coding</title>
+<link rel="icon" href="/favicon.svg">
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root{
+  --paper:#E9EDE9; --line:#C3CCC5; --ink:#101A16; --ink-2:#40514A; --ink-3:#7A8A82;
+  --card:#FFF; --chalk:#F7F9F7; --rule:#D6DDD8; --hit:#12463A;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --cond:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--cond);display:flex;flex-direction:column}
+button{font-family:var(--cond)}
+:focus-visible{outline:2px solid var(--hit);outline-offset:2px}
+
+header{display:flex;align-items:center;gap:10px;padding:7px 12px;border-bottom:1px solid var(--rule);background:var(--card);flex-wrap:wrap;flex:0 0 auto}
+.brand{font:11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+header input{font:12px var(--cond);padding:6px 8px;border:1px solid var(--rule);background:var(--chalk);border-radius:2px;width:100px;color:var(--ink)}
+.spacer{flex:1}
+.btn{font:10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;background:var(--ink);color:var(--paper);
+  border:none;padding:9px 12px;cursor:pointer;border-radius:2px;white-space:nowrap}
+.btn:hover{background:var(--hit)}
+.btn.g{background:none;border:1px solid var(--rule);color:var(--ink-2)}
+.btn.g:hover{background:var(--chalk);color:var(--ink)}
+
+/* main split: video left, clips right */
+main{flex:1;display:flex;min-height:0}
+.left{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+.stage{flex:1;position:relative;background:#05100C;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
+#v{max-width:100%;max-height:100%;display:block}
+#c{position:absolute;touch-action:none;pointer-events:none}
+.stage.draw #c{pointer-events:auto;cursor:crosshair}
+.stage.select #c{pointer-events:auto;cursor:default}
+.drop{color:#8FA79B;text-align:center;padding:40px 24px;font-size:14px}
+.drop b{display:block;font-size:20px;color:#E9EDE9;margin-bottom:8px;font-weight:700}
+.drop small{display:block;margin-top:10px;color:#678074;font-size:12px}
+
+aside{flex:0 0 322px;border-left:1px solid var(--ink);background:var(--card);display:flex;flex-direction:column;min-height:0}
+.asidehead{padding:8px 12px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.tabs{display:flex;gap:2px}
+.tabs button{font:10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;border:1px solid var(--rule);background:var(--chalk);cursor:pointer;color:var(--ink-2);border-radius:2px}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.asidehead b{font:10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:400}
+#panel{flex:1;overflow-y:auto;overflow-x:hidden}
+.clip{padding:9px 12px;border-bottom:1px solid var(--rule);cursor:pointer;position:relative}
+.clip:hover{background:var(--chalk)}
+.clip.on{background:#E6F0EA;box-shadow:inset 3px 0 0 var(--hit)}
+.clip .row1{display:flex;align-items:center;gap:7px}
+.clip .tm{font:13px var(--mono);color:var(--hit);font-weight:700}
+.clip .mo{font-size:11px;color:var(--ink-2)}
+.clip .th{font-size:12px;color:var(--ink);margin-top:3px;line-height:1.35}
+.clip .nt{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.clip .x{position:absolute;right:6px;top:7px;background:none;border:none;color:var(--ink-3);cursor:pointer;font:13px var(--mono);opacity:0}
+.clip:hover .x{opacity:1}
+.clip .x:hover{color:#C2582F}
+.pill{font:9px var(--mono);text-transform:uppercase;padding:2px 5px;border:1px solid var(--rule);border-radius:2px;color:var(--ink-3);white-space:nowrap}
+.pill.us{color:#2F6F5B;border-color:#2F6F5B}.pill.them{color:#C2582F;border-color:#C2582F}
+.pill.bad{color:#C2582F;border-color:#C2582F}.pill.good{color:#2F6F5B;border-color:#2F6F5B}
+.tally{padding:12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13px}
+.tally .n{font:11px var(--mono);color:var(--ink-3)}
+.tally .bar{grid-column:1/-1;height:3px;background:var(--hit);margin-bottom:7px}
+.empty{padding:22px 14px;color:var(--ink-3);font-size:12.5px;line-height:1.6}
+
+.rail{position:absolute;left:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px;
+  background:rgba(8,20,16,.74);backdrop-filter:blur(6px);padding:5px;border-radius:4px;border:1px solid rgba(255,255,255,.1);z-index:3}
+.rail button{width:34px;height:31px;border:none;background:none;color:#C9D8D0;cursor:pointer;border-radius:3px;
+  font:14px/1 var(--mono);display:flex;align-items:center;justify-content:center}
+.rail button:hover{background:rgba(255,255,255,.12);color:#fff}
+.rail button[aria-pressed=true]{background:#fff;color:#0B1B15}
+.rail .sep{height:1px;background:rgba(255,255,255,.15);margin:3px 2px}
+.sw{width:24px;height:14px;border-radius:2px;border:1px solid rgba(255,255,255,.25);cursor:pointer;margin:2px auto}
+.sw[aria-pressed=true]{outline:2px solid #fff;outline-offset:1px}
+
+.cam{position:absolute;left:54px;top:50%;transform:translateY(-50%);width:250px;background:rgba(8,20,16,.94);
+  backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:13px;color:#C9D8D0;z-index:4}
+.cam h4{margin:0 0 4px;font:10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#7E958B;font-weight:400}
+.cam p{margin:0 0 10px;font-size:11px;color:#8AA096;line-height:1.5}
+.cam .presets{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px}
+.cam .presets button,.cam .cal{font:10px var(--cond);padding:8px 6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  color:#C9D8D0;border-radius:2px;cursor:pointer}
+.cam .cal{width:100%;padding:10px;background:#37C08A;color:#08221A;border:none;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.cam .presets button:hover{background:rgba(255,255,255,.16);color:#fff}
+.cam label{display:flex;justify-content:space-between;font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#7E958B;margin:9px 0 3px}
+.cam input[type=range]{width:100%;accent-color:#37C08A}
+
+.transport{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;align-items:center;gap:2px;
+  background:rgba(8,20,16,.74);backdrop-filter:blur(6px);padding:5px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.1);
+  max-width:calc(100% - 20px);flex-wrap:wrap;justify-content:center;z-index:3}
+.transport button{background:none;border:none;color:#C9D8D0;cursor:pointer;font:11px var(--mono);padding:7px 8px;border-radius:3px}
+.transport button:hover{background:rgba(255,255,255,.12);color:#fff}
+.clock{font:13px var(--mono);color:#fff;padding:0 8px;white-space:nowrap}
+.clock i{font-style:normal;color:#7E958B}
+.tip{position:absolute;left:50%;bottom:58px;transform:translateX(-50%);background:rgba(8,20,16,.82);color:#C9D8D0;
+  font:11px var(--mono);padding:7px 12px;border-radius:3px;border:1px solid rgba(255,255,255,.12);z-index:3;max-width:80%;text-align:center}
+
+.tagbar{background:var(--card);border-top:1px solid var(--rule);padding:8px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:0 0 auto}
+.grp{display:flex;gap:4px;align-items:center}
+.grp>span{font:9px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+.chip{font:12px/1 var(--cond);padding:7px 9px;border:1px solid var(--rule);background:var(--chalk);cursor:pointer;border-radius:2px;color:var(--ink-2)}
+.chip:hover{border-color:var(--ink-3)}
+.chip[aria-pressed=true]{background:var(--hit);border-color:var(--hit);color:#fff}
+.chip.us[aria-pressed=true]{background:#2F6F5B;border-color:#2F6F5B}
+.chip.them[aria-pressed=true]{background:#C2582F;border-color:#C2582F}
+.themebar{background:var(--card);border-top:1px dashed var(--rule);padding:7px 12px;display:flex;gap:4px;flex-wrap:wrap;align-items:center;flex:0 0 auto;max-height:84px;overflow-y:auto}
+.themebar .chip{padding:6px 8px;font-size:11.5px}
+#player,#note{font:12px var(--cond);padding:7px 9px;border:1px solid var(--rule);background:var(--chalk);border-radius:2px;color:var(--ink)}
+#player{width:92px} #note{flex:1;min-width:150px}
+kbd{font:9px var(--mono);border:1px solid var(--rule);padding:1px 3px;background:var(--chalk);border-radius:2px;color:var(--ink-3)}
+.hint{font-size:11px;color:var(--ink-3)}
+@media(max-width:900px){
+  main{flex-direction:column}
+  aside{flex:0 0 40vh;border-left:none;border-top:1px solid var(--ink)}
+  .rail{left:5px;padding:3px}.rail button{width:29px;height:27px;font-size:12px}
+  .cam{left:42px;width:210px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" style="text-decoration:none" class="brand" title="Home">&larr; Video tagger</a>
+  <input id="m-us" type="text" placeholder="Our team">
+  <input id="m-them" type="text" placeholder="Opponent">
+  <input id="m-date" type="text" placeholder="2026-08-16">
+  <span class="spacer"></span>
+  <span class="hint" id="status">No video loaded</span>
+  <button class="btn g" onclick="$('file').click()">Video</button>
+  <button class="btn g" onclick="saveWork()">Save</button>
+  <button class="btn g" onclick="$('loadwork').click()">Load</button>
+  <button class="btn" onclick="exportMd()">Export</button>
+</header>
+
+<main>
+<div class="left">
+  <div class="stage" id="stage">
+    <div class="drop" id="drop">
+      <b>Drop the match video here</b>
+      Nothing uploads — your browser reads the file straight from disk.
+      <small>MP4, MOV or WebM · or use the Video button above</small>
+    </div>
+    <video id="v" hidden playsinline></video>
+    <canvas id="c" hidden></canvas>
+
+    <div class="rail" id="rail" hidden>
+      <button data-tool="none"   aria-pressed="true"  title="Watch — no drawing (Esc)">✥</button>
+      <button data-tool="select" aria-pressed="false" title="Select &amp; edit (V)">⌖</button>
+      <div class="sep"></div>
+      <button data-tool="link"   aria-pressed="false" title="Players &amp; links — click each player's feet (K)">⛓</button>
+      <button data-tool="ring"   aria-pressed="false" title="Highlight one player — click the feet (C)">◯</button>
+      <button data-tool="marker" aria-pressed="false" title="Numbered marker (M)">➊</button>
+      <button data-tool="arrow"  aria-pressed="false" title="Arrow (R)">↗</button>
+      <button data-tool="pen"    aria-pressed="false" title="Freehand (P)">✎</button>
+      <button data-tool="rect"   aria-pressed="false" title="Zone on the pitch (B)">▱</button>
+      <div class="sep"></div>
+      <button id="fillbtn" onclick="toggleFill()" aria-pressed="false" title="Filled or hollow (F)">◐</button>
+      <button id="dashbtn" onclick="toggleDash()" aria-pressed="false" title="Solid or dashed line (Y)">┅</button>
+      <button id="cambtn"  onclick="toggleCam()"  aria-pressed="false" title="Camera angle — makes circles sit on the grass">⌗</button>
+      <div class="sep"></div>
+      <div id="swatches"></div>
+      <div class="sep"></div>
+      <button onclick="undo()" title="Undo (Z)">↺</button>
+      <button onclick="clearShapes()" title="Clear drawing (X)">⌫</button>
+      <button onclick="snapshot()" title="Save frame as PNG (S)">⎙</button>
+    </div>
+
+    <div class="cam" id="campanel" hidden>
+      <h4>Camera angle</h4>
+      <p>A circle on the grass reads as an ellipse — flatter and smaller the further away it is. Calibrate once per camera position.</p>
+      <button class="cal" id="calbtn" onclick="startCal()">Calibrate on two players</button>
+      <p style="margin:8px 0 10px;font-size:10.5px">Drag a circle around a <b>near</b> player's feet, then a <b>far</b> one. The rest is solved for you.</p>
+      <div class="presets">
+        <button onclick="preset('main')">Main stand</button>
+        <button onclick="preset('low')">Low touchline</button>
+        <button onclick="preset('goal')">Behind goal</button>
+        <button onclick="preset('drone')">Overhead</button>
+      </div>
+      <label>Circle size <span id="lb"></span></label>
+      <input type="range" id="rb" min="10" max="90" oninput="cam.base=this.value/1000;draw();sync(1)">
+      <label>Vanishing line <span id="lh"></span></label>
+      <input type="range" id="rh" min="-80" max="60" oninput="cam.h=this.value/100;draw();sync(1)">
+      <label>Flattening <span id="lf"></span></label>
+      <input type="range" id="rf" min="10" max="100" oninput="cam.f0=this.value/100;draw();sync(1)">
+      <p style="margin:10px 0 0;font-size:10.5px">The vanishing line usually sits <b>above</b> the trees — often off the top of the frame. It is not the horizon you can see.</p>
+    </div>
+
+    <div class="transport" id="transport" hidden>
+      <button onclick="nudge(-10)">−10s</button>
+      <button onclick="nudge(-3)">−3s</button>
+      <button onclick="frame(-1)">◀</button>
+      <button onclick="toggle()">▶ / ⏸</button>
+      <button onclick="frame(1)">▶</button>
+      <button onclick="nudge(3)">+3s</button>
+      <button onclick="nudge(10)">+10s</button>
+      <span class="clock"><span id="clock">0:00</span> <i id="dur"></i> <i>×<span id="rate">1</span></i></span>
+      <button onclick="rate(-.25)">slower</button>
+      <button onclick="rate(.25)">faster</button>
+    </div>
+    <div class="tip" id="tip" hidden></div>
+  </div>
+
+  <div class="tagbar">
+    <div class="grp"><span>Who</span>
+      <button class="chip us"   data-k="team" data-v="us"   aria-pressed="false">Us <kbd>U</kbd></button>
+      <button class="chip them" data-k="team" data-v="them" aria-pressed="true">Them <kbd>T</kbd></button>
+    </div>
+    <div class="grp"><span>Phase</span>
+      <button class="chip" data-k="phase" data-v="attacking"  aria-pressed="true">Att <kbd>A</kbd></button>
+      <button class="chip" data-k="phase" data-v="defensive"  aria-pressed="false">Def <kbd>D</kbd></button>
+      <button class="chip" data-k="phase" data-v="transition" aria-pressed="false">Trans</button>
+      <button class="chip" data-k="phase" data-v="set-pieces" aria-pressed="false">Set piece</button>
+    </div>
+    <div class="grp"><span>Moment</span>
+      <button class="chip" data-k="moment" data-v="buildup"     aria-pressed="false">Build-up <kbd>1</kbd></button>
+      <button class="chip" data-k="moment" data-v="progression" aria-pressed="true">Progression <kbd>2</kbd></button>
+      <button class="chip" data-k="moment" data-v="finishing"   aria-pressed="false">Finishing <kbd>3</kbd></button>
+      <button class="chip" data-k="moment" data-v="set-pieces"  aria-pressed="false">Set piece <kbd>4</kbd></button>
+    </div>
+    <div class="grp"><span>Verdict</span>
+      <button class="chip" data-k="verdict" data-v="good"    aria-pressed="false">Worked <kbd>Q</kbd></button>
+      <button class="chip" data-k="verdict" data-v="bad"     aria-pressed="false">Broke <kbd>W</kbd></button>
+      <button class="chip" data-k="verdict" data-v="neutral" aria-pressed="true">Neutral <kbd>E</kbd></button>
+    </div>
+    <input id="player" type="text" placeholder="Player">
+    <input id="note" type="text" placeholder="Note — Enter to tag">
+    <button class="btn" onclick="tag()">Tag now ⏎</button>
+  </div>
+  <div class="themebar" id="themebar"></div>
+</div>
+
+<aside>
+  <div class="asidehead">
+    <div class="tabs">
+      <button id="tab-clips" aria-selected="true"  onclick="setTab('clips')">Clips</button>
+      <button id="tab-tally" aria-selected="false" onclick="setTab('tally')">Tally</button>
+    </div>
+    <b id="n">0</b>
+    <span class="spacer"></span>
+    <span class="hint">lead-in <input id="lead" type="number" value="6" min="0" max="30" style="width:44px;font:11px var(--mono);padding:4px;border:1px solid var(--rule);background:var(--chalk);border-radius:2px">s</span>
+  </div>
+  <div id="panel"></div>
+</aside>
+</main>
+
+<input type="file" id="file" accept="video/*" hidden>
+<input type="file" id="loadwork" accept=".json" hidden>
+
+<script>
+const $=id=>document.getElementById(id);
+const THEMES=["passing-control", "finishing", "pressing", "support", "perception", "width", "depth", "crossing", "marking", "duel-1v1", "compactness", "possession", "goalkeeper", "switch", "intervals", "superiority", "counterattack", "aerial", "transition", "second-ball"];
+const COLORS=[["them","#FF7A45"],["us","#37C08A"],["key","#FFD447"],["plain","#FFFFFF"]];
+/* base = circle radius as a fraction of frame width at the bottom of frame
+   h    = vanishing line of the GROUND PLANE (often above the visible horizon, can be negative)
+   f0   = ellipse ry/rx at the bottom of frame                                              */
+const PRESETS={main:{h:.06,f0:.55,base:.040,ortho:false},low:{h:.20,f0:.30,base:.045,ortho:false},
+               goal:{h:.12,f0:.45,base:.042,ortho:false},drone:{h:0,f0:1,base:.030,ortho:true}};
+const ctx={team:"them",phase:"attacking",moment:"progression",verdict:"neutral"};
+const cam={h:.06,f0:.55,base:.040,ortho:false};
+let clips=[],shapes=[],tool="none",color="#FF7A45",fillOn=false,dashOn=false,
+    draft=null,chain=null,sel=-1,drag=null,pendingImage=null,tab="clips",markerN=1,
+    camOpen=false,calStep=0,calPts=[],active=-1,tipTimer=null;
+const v=$("v"),cv=$("c"),stage=$("stage"),g=cv.getContext("2d");
+
+/* ============ video ============ */
+const fmt=t=>{t=Math.max(0,t);const m=Math.floor(t/60),s=Math.floor(t%60);return m+":"+String(s).padStart(2,"0");};
+const slug=s=>(s||"").replace(/[^\w\-]+/g,"-").replace(/^-|-$/g,"");
+$("file").onchange=e=>load(e.target.files[0]);
+addEventListener("dragover",e=>e.preventDefault());
+addEventListener("drop",e=>{e.preventDefault();const f=[...e.dataTransfer.files].find(x=>x.type.startsWith("video"));if(f)load(f);});
+function load(f){
+  if(!f)return;
+  v.src=URL.createObjectURL(f);v.hidden=false;cv.hidden=false;
+  $("drop").style.display="none";$("rail").hidden=false;$("transport").hidden=false;
+  $("status").textContent=f.name.slice(0,30);
+  v.onloadedmetadata=()=>{$("dur").textContent="of "+fmt(v.duration);fit();};
+}
+v.addEventListener("timeupdate",()=>$("clock").textContent=fmt(v.currentTime));
+const toggle=()=>v.paused?v.play():v.pause();
+const nudge=s=>v.currentTime=Math.max(0,Math.min(v.duration||1e9,v.currentTime+s));
+const frame=d=>{v.pause();v.currentTime=Math.max(0,v.currentTime+d/25);};
+const rate=d=>{v.playbackRate=Math.min(4,Math.max(.25,+(v.playbackRate+d).toFixed(2)));$("rate").textContent=v.playbackRate;};
+function fit(){
+  const r=v.getBoundingClientRect(),sr=stage.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  cv.style.width=r.width+"px";cv.style.height=r.height+"px";
+  cv.style.left=(r.left-sr.left)+"px";cv.style.top=(r.top-sr.top)+"px";
+  cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);
+  draw();
+}
+addEventListener("resize",fit);
+new ResizeObserver(()=>{if(!v.hidden)fit();}).observe(stage);
+function tip(msg){$("tip").hidden=!msg;if(msg){$("tip").textContent=msg;clearTimeout(tipTimer);tipTimer=setTimeout(()=>$("tip").hidden=true,5200);}}
+
+/* ============ perspective ============
+   For a plane, image scale is proportional to the distance below the vanishing
+   line. One calibration fixes both the size falloff and the flattening.        */
+function sFac(y){return cam.ortho?1:Math.max(.06,(y-cam.h)/Math.max(.25,1-cam.h));}
+function radii(sh,W){
+  const s=sFac(sh.y),rx=Math.max(3,cam.base*W*s*(sh.r||1));
+  return {rx,ry:Math.max(2,rx*(cam.ortho?1:Math.max(.10,cam.f0*s)))};
+}
+function preset(k){Object.assign(cam,PRESETS[k]);sync();draw();}
+function sync(skipInputs){
+  if(!skipInputs){$("rb").value=Math.round(cam.base*1000);$("rh").value=Math.round(cam.h*100);$("rf").value=Math.round(cam.f0*100);}
+  $("lb").textContent=(cam.base*100).toFixed(1)+"%";
+  $("lh").textContent=cam.h.toFixed(2);
+  $("lf").textContent=Math.round(cam.f0*100);
+}
+function toggleCam(){camOpen=!camOpen;$("campanel").hidden=!camOpen;$("cambtn").setAttribute("aria-pressed",camOpen);
+  cv.style.pointerEvents=(camOpen||tool!=="none")?"auto":"none";sync();draw();}
+function startCal(){
+  if(!v.src){tip("Load the video first");return;}
+  v.pause();calStep=1;calPts=[];setTool("ring");
+  tip("Calibrating 1 of 2 — drag a circle around a NEAR player's feet");
+}
+function finishCal(){
+  const [a,b]=calPts;
+  const den=b.rx-a.rx;
+  if(Math.abs(den)<1e-4||Math.abs(a.y-b.y)<.06){tip("Those were too close together — try a near and a far player");calStep=0;return;}
+  let h=(b.rx*a.y-a.rx*b.y)/den;
+  h=Math.max(-.8,Math.min(.6,h));
+  const s=Math.max(.06,(a.y-h)/Math.max(.25,1-h));
+  cam.h=h;cam.ortho=false;cam.base=Math.max(.010,Math.min(.09,a.rx/s));
+  calStep=0;sync();draw();
+  tip("Calibrated — vanishing line "+h.toFixed(2)+". Adjust flattening if the ellipses look too round or too flat.");
+}
+
+/* ============ tools ============ */
+function setTool(t){
+  endChain();tool=t;sel=-1;
+  document.querySelectorAll("#rail [data-tool]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tool===t));
+  stage.classList.toggle("draw",t!=="none"&&t!=="select");
+  stage.classList.toggle("select",t==="select");
+  cv.style.pointerEvents=(camOpen||t!=="none")?"auto":"none";
+  if(t!=="none")v.pause();
+  const tips={link:"Click each player's FEET in turn — circles join up as you go. Esc ends the chain.",
+    ring:"Click a player's feet. Drag out to resize.",marker:"Click to drop numbered markers.",
+    select:"Click a shape to select. Drag it, drag its handles, Delete removes it, a swatch recolours it.",
+    arrow:"Drag from where the run or pass starts.",pen:"Draw freehand.",
+    rect:"Drag a zone — it follows the pitch, narrower towards the far end."};
+  if(!calStep)tip(tips[t]||"");
+  draw();
+}
+document.querySelectorAll("#rail [data-tool]").forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+$("swatches").innerHTML=COLORS.map(([k,c],i)=>`<div class="sw" style="background:${c}" data-c="${c}" aria-pressed="${i===0}" title="${k}"></div>`).join("");
+document.querySelectorAll(".sw").forEach(s=>s.onclick=()=>{
+  color=s.dataset.c;document.querySelectorAll(".sw").forEach(x=>x.setAttribute("aria-pressed",x===s));
+  if(sel>=0){shapes[sel].c=color;draw();}});
+function toggleFill(){fillOn=!fillOn;$("fillbtn").setAttribute("aria-pressed",fillOn);
+  if(sel>=0){shapes[sel].fill=fillOn;draw();}}
+function toggleDash(){dashOn=!dashOn;$("dashbtn").setAttribute("aria-pressed",dashOn);
+  if(sel>=0){shapes[sel].dash=dashOn;draw();}}
+
+/* ============ geometry ============ */
+const P=(sh,W,H)=>({x:sh.x*W,y:sh.y*H});
+function rimPoint(node,tx,ty,W,H){
+  const c=P(node,W,H),{rx,ry}=radii(node,W);
+  const a=Math.atan2((ty-c.y)/ry,(tx-c.x)/rx);
+  return {x:c.x+rx*Math.cos(a),y:c.y+ry*Math.sin(a)};
+}
+const distSeg=(px,py,x1,y1,x2,y2)=>{
+  const dx=x2-x1,dy=y2-y1,L=dx*dx+dy*dy;
+  let t=L?((px-x1)*dx+(py-y1)*dy)/L:0;t=Math.max(0,Math.min(1,t));
+  return Math.hypot(px-(x1+t*dx),py-(y1+t*dy));
+};
+// a zone drawn on the pitch: the far edge narrows by the same perspective factor
+function zoneQuad(s,W,H){
+  const yA=Math.min(s.y,s.y2),yB=Math.max(s.y,s.y2);
+  const cx=(s.x+s.x2)/2,halfB=Math.abs(s.x2-s.x)/2;
+  const k=sFac(yA)/sFac(yB),halfA=halfB*k;
+  return [[(cx-halfA)*W,yA*H],[(cx+halfA)*W,yA*H],[(cx+halfB)*W,yB*H],[(cx-halfB)*W,yB*H]];
+}
+
+/* ============ render ============ */
+function render(c2,W,H,list,selIdx,showLine){
+  const k=Math.min(W,H)/540,lw=Math.max(1.6,2.8*k);
+  c2.lineCap="round";c2.lineJoin="round";c2.textAlign="center";c2.textBaseline="middle";
+  if(showLine&&!cam.ortho&&cam.h>0&&cam.h<1){
+    c2.save();c2.setLineDash([7*k,7*k]);c2.strokeStyle="#37C08A";c2.lineWidth=1.4*k;c2.globalAlpha=.8;
+    c2.beginPath();c2.moveTo(0,cam.h*H);c2.lineTo(W,cam.h*H);c2.stroke();c2.restore();
+  }
+  list.forEach((s,i)=>{
+    c2.save();
+    c2.shadowColor="rgba(0,0,0,.6)";c2.shadowBlur=5*k;
+    c2.strokeStyle=s.c;c2.fillStyle=s.c;c2.lineWidth=lw;
+    if(s.dash)c2.setLineDash([9*k,7*k]);
+    const p=P(s,W,H);
+    const paint=()=>{if(s.fill){c2.globalAlpha=.35;c2.fill();c2.globalAlpha=1;}c2.stroke();};
+    if(s.k==="pen"){c2.beginPath();s.pts.forEach((q,j)=>j?c2.lineTo(q[0]*W,q[1]*H):c2.moveTo(q[0]*W,q[1]*H));c2.stroke();}
+    else if(s.k==="line"||s.k==="arrow"){
+      const x2=s.x2*W,y2=s.y2*H;
+      c2.beginPath();c2.moveTo(p.x,p.y);c2.lineTo(x2,y2);c2.stroke();
+      if(s.k==="arrow"){
+        c2.setLineDash([]);
+        const a=Math.atan2(y2-p.y,x2-p.x),h=13*k;
+        c2.beginPath();c2.moveTo(x2,y2);
+        c2.lineTo(x2-h*Math.cos(a-.42),y2-h*Math.sin(a-.42));
+        c2.lineTo(x2-h*Math.cos(a+.42),y2-h*Math.sin(a+.42));
+        c2.closePath();c2.fill();
+      }
+    }
+    else if(s.k==="rect"){
+      const q=zoneQuad(s,W,H);
+      c2.beginPath();q.forEach((pt,j)=>j?c2.lineTo(pt[0],pt[1]):c2.moveTo(pt[0],pt[1]));c2.closePath();
+      if(s.fill!==false){c2.globalAlpha=s.fill?.35:.16;c2.fill();c2.globalAlpha=1;}
+      c2.stroke();
+    }
+    else if(s.k==="ring"||s.k==="marker"){
+      const {rx,ry}=radii(s,W);
+      c2.beginPath();c2.ellipse(p.x,p.y,rx,ry,0,0,6.2832);
+      if(s.k==="marker"){
+        c2.globalAlpha=1;c2.fill();c2.shadowBlur=0;c2.fillStyle="#0B1B15";c2.setLineDash([]);
+        c2.font="700 "+Math.max(9,Math.round(Math.min(rx,ry)*1.4))+"px "+getComputedStyle(document.body).fontFamily;
+        c2.fillText(s.n,p.x,p.y);
+      }else paint();
+    }
+    else if(s.k==="link"){
+      const N=s.nodes;
+      for(let j=0;j<N.length-1;j++){
+        const a=P(N[j],W,H),b=P(N[j+1],W,H);
+        const p1=rimPoint({...N[j],r:s.r},b.x,b.y,W,H),p2=rimPoint({...N[j+1],r:s.r},a.x,a.y,W,H);
+        c2.beginPath();c2.moveTo(p1.x,p1.y);c2.lineTo(p2.x,p2.y);c2.stroke();
+      }
+      N.forEach(nd=>{
+        const q=P(nd,W,H),{rx,ry}=radii({...nd,r:s.r},W);
+        c2.beginPath();c2.ellipse(q.x,q.y,rx,ry,0,0,6.2832);
+        if(s.fill){c2.globalAlpha=.35;c2.fill();c2.globalAlpha=1;}
+        c2.stroke();
+      });
+    }
+    if(i===selIdx){
+      c2.shadowBlur=0;c2.setLineDash([]);
+      handles(s,W,H).forEach(h=>{
+        c2.fillStyle="#FFFFFF";c2.fillRect(h.x-4*k,h.y-4*k,8*k,8*k);
+        c2.strokeStyle="#0B1B15";c2.lineWidth=1.2*k;c2.strokeRect(h.x-4*k,h.y-4*k,8*k,8*k);
+      });
+    }
+    c2.restore();
+  });
+}
+function handles(s,W,H){
+  if(s.k==="link")return s.nodes.map((n,i)=>({x:n.x*W,y:n.y*H,h:"node"+i}));
+  if(s.k==="ring"||s.k==="marker"){
+    const p=P(s,W,H),{rx}=radii(s,W);
+    return [{x:p.x,y:p.y,h:"move"},{x:p.x+rx,y:p.y,h:"size"}];
+  }
+  if(s.k==="pen")return [{x:s.pts[0][0]*W,y:s.pts[0][1]*H,h:"move"}];
+  return [{x:s.x*W,y:s.y*H,h:"a"},{x:s.x2*W,y:s.y2*H,h:"b"}];
+}
+function draw(){
+  g.clearRect(0,0,cv.width,cv.height);
+  const list=shapes.slice();
+  if(chain)list.push(chain);
+  if(draft)list.push(draft);
+  render(g,cv.width,cv.height,list,sel,camOpen||calStep>0);
+}
+
+/* ============ hit testing ============ */
+function hitShape(s,px,py,W,H){
+  const p=P(s,W,H);
+  if(s.k==="ring"||s.k==="marker"){const {rx,ry}=radii(s,W);return Math.hypot((px-p.x)/rx,(py-p.y)/ry)<1.3;}
+  if(s.k==="link"){
+    for(const n of s.nodes){const q=P(n,W,H),{rx,ry}=radii({...n,r:s.r},W);
+      if(Math.hypot((px-q.x)/rx,(py-q.y)/ry)<1.3)return true;}
+    for(let j=0;j<s.nodes.length-1;j++){const a=P(s.nodes[j],W,H),b=P(s.nodes[j+1],W,H);
+      if(distSeg(px,py,a.x,a.y,b.x,b.y)<12)return true;}
+    return false;
+  }
+  if(s.k==="pen")return s.pts.some(q=>Math.hypot(px-q[0]*W,py-q[1]*H)<14);
+  if(s.k==="rect"){
+    const q=zoneQuad(s,W,H),xs=q.map(a=>a[0]),ys=q.map(a=>a[1]);
+    return px>Math.min(...xs)-8&&px<Math.max(...xs)+8&&py>Math.min(...ys)-8&&py<Math.max(...ys)+8;
+  }
+  return distSeg(px,py,p.x,p.y,s.x2*W,s.y2*H)<12;
+}
+function pickShape(px,py,W,H){
+  for(let i=shapes.length-1;i>=0;i--){
+    if(i===sel)for(const h of handles(shapes[i],W,H))if(Math.hypot(px-h.x,py-h.y)<11)return {i,h:h.h};
+    if(hitShape(shapes[i],px,py,W,H))return {i,h:"move"};
+  }
+  return null;
+}
+
+/* ============ pointer ============ */
+const norm=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};};
+cv.addEventListener("pointerdown",e=>{
+  cv.setPointerCapture(e.pointerId);
+  const n=norm(e),W=cv.width,H=cv.height,px=n.x*W,py=n.y*H;
+  if(camOpen&&!calStep&&!cam.ortho&&cam.h>0&&Math.abs(py-cam.h*H)<16){drag={horizon:true};return;}
+  if(tool==="none")return;
+  if(tool==="select"){
+    const got=pickShape(px,py,W,H);
+    sel=got?got.i:-1;
+    if(got){fillOn=!!shapes[got.i].fill;dashOn=!!shapes[got.i].dash;
+      $("fillbtn").setAttribute("aria-pressed",fillOn);$("dashbtn").setAttribute("aria-pressed",dashOn);}
+    drag=got?{i:got.i,h:got.h,ox:n.x,oy:n.y,snap:JSON.parse(JSON.stringify(shapes[got.i]))}:null;
+    draw();return;
+  }
+  if(tool==="link"){
+    if(!chain)chain={k:"link",c:color,r:1,fill:fillOn,dash:dashOn,nodes:[]};
+    chain.nodes.push({x:n.x,y:n.y});draw();return;
+  }
+  if(tool==="marker"){shapes.push({k:"marker",c:color,x:n.x,y:n.y,r:1,n:markerN++});draw();return;}
+  if(tool==="ring"){draft={k:"ring",c:color,x:n.x,y:n.y,r:1,fill:fillOn,dash:dashOn,sizing:true};draw();return;}
+  draft={k:tool,c:color,x:n.x,y:n.y,x2:n.x,y2:n.y,fill:fillOn,dash:dashOn,pts:[[n.x,n.y]]};
+});
+cv.addEventListener("pointermove",e=>{
+  if(!drag&&!draft)return;
+  const n=norm(e),W=cv.width,H=cv.height;
+  if(drag&&drag.horizon){cam.h=Math.max(-.8,Math.min(.6,n.y));sync();draw();return;}
+  if(drag){
+    const s=shapes[drag.i],o=drag.snap,dx=n.x-drag.ox,dy=n.y-drag.oy;
+    if(drag.h==="move"){
+      if(s.k==="link")s.nodes.forEach((nd,j)=>{nd.x=o.nodes[j].x+dx;nd.y=o.nodes[j].y+dy;});
+      else if(s.k==="pen")s.pts=o.pts.map(q=>[q[0]+dx,q[1]+dy]);
+      else{s.x=o.x+dx;s.y=o.y+dy;if(s.x2!==undefined){s.x2=o.x2+dx;s.y2=o.y2+dy;}}
+    }
+    else if(drag.h==="a"){s.x=n.x;s.y=n.y;}
+    else if(drag.h==="b"){s.x2=n.x;s.y2=n.y;}
+    else if(drag.h==="size"){
+      const p=P(s,W,H),unit=Math.max(3,cam.base*W*sFac(s.y));
+      s.r=Math.max(.25,Math.min(5,Math.abs(n.x*W-p.x)/unit));
+    }
+    else if(drag.h.startsWith("node")){const j=+drag.h.slice(4);s.nodes[j].x=n.x;s.nodes[j].y=n.y;}
+    draw();return;
+  }
+  if(draft.k==="pen")draft.pts.push([n.x,n.y]);
+  else if(draft.sizing){
+    const p=P(draft,W,H),unit=Math.max(3,cam.base*W*sFac(draft.y));
+    const d=Math.hypot(n.x*W-p.x,n.y*H-p.y);
+    if(d>6)draft.r=Math.max(.25,Math.min(5,d/unit));
+  }
+  else{draft.x2=n.x;draft.y2=n.y;}
+  draw();
+});
+cv.addEventListener("pointerup",()=>{
+  if(drag){drag=null;return;}
+  if(!draft)return;
+  const d=draft;delete d.sizing;
+  if(calStep&&d.k==="ring"){
+    calPts.push({y:d.y,rx:cam.base*cv.width*sFac(d.y)*d.r/cv.width});   // rx as fraction of width
+    draft=null;
+    if(calStep===1){calStep=2;tip("Calibrating 2 of 2 — now a FAR player's feet");}
+    else finishCal();
+    draw();return;
+  }
+  const big=d.k==="ring"||(d.k==="pen"&&d.pts.length>3)||Math.hypot((d.x2||0)-d.x,(d.y2||0)-d.y)>.012;
+  if(big)shapes.push(d);
+  draft=null;draw();
+});
+cv.addEventListener("dblclick",()=>{if(chain){endChain();}});
+function endChain(){
+  if(!chain)return;
+  if(chain.nodes.length>1)shapes.push(chain);
+  else if(chain.nodes.length===1)shapes.push({k:"ring",c:chain.c,x:chain.nodes[0].x,y:chain.nodes[0].y,r:1,fill:chain.fill,dash:chain.dash});
+  chain=null;draw();
+}
+function undo(){if(chain&&chain.nodes.length){chain.nodes.pop();if(!chain.nodes.length)chain=null;}else shapes.pop();sel=-1;draw();}
+function clearShapes(){shapes=[];chain=null;sel=-1;markerN=1;draw();}
+function delSel(){if(sel>=0){shapes.splice(sel,1);sel=-1;draw();}}
+
+/* ============ snapshot ============ */
+function snapshot(){
+  if(!v.src)return;
+  endChain();
+  const W=v.videoWidth||1280,H=v.videoHeight||720;
+  const o=document.createElement("canvas");o.width=W;o.height=H;
+  const oc=o.getContext("2d");
+  oc.drawImage(v,0,0,W,H);
+  render(oc,W,H,shapes,-1,false);
+  const name=slug(matchName())+"-"+fmt(v.currentTime).replace(":","-")+".png";
+  o.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),3000);});
+  pendingImage=name;$("status").textContent="frame saved";
+}
+
+/* ============ tagging ============ */
+document.querySelectorAll(".chip[data-k]").forEach(b=>b.onclick=()=>setCtx(b.dataset.k,b.dataset.v));
+function setCtx(k,val){ctx[k]=val;document.querySelectorAll(`.chip[data-k="${k}"]`).forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===val));}
+$("themebar").innerHTML=`<span style="font:9px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)">Themes — pick any, then tag</span>`+
+  THEMES.map(t=>`<button class="chip th" data-t="${t}" aria-pressed="false">${t}</button>`).join("");
+document.querySelectorAll(".chip.th").forEach(b=>b.onclick=()=>b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true"));
+const chosenThemes=()=>[...document.querySelectorAll('.chip.th[aria-pressed="true"]')].map(b=>b.dataset.t);
+const clearThemes=()=>document.querySelectorAll(".chip.th").forEach(b=>b.setAttribute("aria-pressed","false"));
+
+function tag(){
+  if(!v.src){$("status").textContent="Load a video first";return;}
+  endChain();
+  const lead=parseInt($("lead").value||"0",10);
+  clips.push({t:Math.max(0,v.currentTime-lead),tagged:v.currentTime,team:ctx.team,phase:ctx.phase,
+    moment:ctx.moment,verdict:ctx.verdict,themes:chosenThemes(),player:$("player").value.trim(),
+    note:$("note").value.trim(),img:pendingImage||"",
+    shapes:shapes.length?JSON.parse(JSON.stringify(shapes)):null,cam:{...cam}});
+  pendingImage=null;$("note").value="";clearThemes();
+  renderPanel();$("status").textContent="tagged "+fmt(v.currentTime);
+}
+const del=(i,e)=>{if(e)e.stopPropagation();clips.splice(i,1);if(active===i)active=-1;renderPanel();};
+function recall(i){
+  const c=clips[i];active=i;
+  v.currentTime=c.tagged;v.pause();
+  if(c.cam)Object.assign(cam,c.cam),sync();
+  shapes=c.shapes?JSON.parse(JSON.stringify(c.shapes)):[];
+  markerN=shapes.filter(s=>s.k==="marker").length+1;
+  if(c.shapes)setTool("select");
+  renderPanel();draw();
+}
+function step(d){
+  if(!clips.length)return;
+  let i=active<0?(d>0?0:clips.length-1):active+d;
+  i=Math.max(0,Math.min(clips.length-1,i));
+  recall(i);
+  const el=document.querySelector(".clip.on");if(el)el.scrollIntoView({block:"nearest"});
+}
+const setTab=t=>{tab=t;$("tab-clips").setAttribute("aria-selected",t==="clips");$("tab-tally").setAttribute("aria-selected",t==="tally");renderPanel();};
+
+function renderPanel(){
+  clips.sort((a,b)=>a.t-b.t);
+  $("n").textContent=clips.length+" clip"+(clips.length===1?"":"s");
+  const p=$("panel");
+  if(!clips.length){p.innerHTML=`<div class="empty"><b>No clips yet.</b><br>Set who / phase / moment, pick the themes that apply, then <b>Tag now</b>. Draw first and the drawing travels with the clip.<br><br>Once you have clips, <kbd>[</kbd> and <kbd>]</kbd> step back and forward through them.</div>`;return;}
+  if(tab==="clips"){
+    p.innerHTML=clips.map((c,i)=>`<div class="clip ${i===active?"on":""}" onclick="recall(${i})">
+      <button class="x" onclick="del(${i},event)" aria-label="Delete clip">×</button>
+      <div class="row1"><span class="tm">${fmt(c.t)}</span>
+        <span class="pill ${c.team}">${c.team}</span>
+        <span class="pill ${c.verdict==="bad"?"bad":c.verdict==="good"?"good":""}">${c.verdict==="bad"?"broke":c.verdict==="good"?"worked":"·"}</span>
+        ${c.shapes?'<span class="pill" title="drawing">✎</span>':""}${c.img?'<span class="pill" title="frame saved">⎙</span>':""}</div>
+      <div class="mo">${c.moment} · ${c.phase}${c.player?" · #"+c.player:""}</div>
+      ${(c.themes||[]).length?`<div class="th">${c.themes.join(", ")}</div>`:""}
+      ${c.note?`<div class="nt">${c.note}</div>`:""}
+    </div>`).join("");
+  }else{
+    const by={};
+    clips.forEach(c=>{(c.themes&&c.themes.length?c.themes:["untagged"]).forEach(t=>{
+      const k=t+" · "+c.moment;by[k]=by[k]||{n:0,bad:0};by[k].n++;if(c.verdict==="bad")by[k].bad++;});});
+    const max=Math.max(...Object.values(by).map(x=>x.n));
+    p.innerHTML=`<div class="tally">`+Object.entries(by).sort((a,b)=>b[1].n-a[1].n).map(([k,x])=>
+      `<span>${k}${x.n>=3?' <span class="pill">pattern</span>':""}</span><span class="n">${x.n}${x.bad?" · "+x.bad+"✗":""}</span>
+       <span class="bar" style="width:${Math.round(x.n/max*100)}%"></span>`).join("")+`</div>`;
+  }
+}
+
+/* ============ save / load / export ============ */
+const matchName=()=>{
+  const a=$("m-us").value.trim()||"Us",b=$("m-them").value.trim()||"Opponent",d=$("m-date").value.trim();
+  return (d?d+" ":"")+a+" vs "+b;
+};
+function dl(name,text,mime){
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:mime||"text/markdown"}));
+  a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+const saveWork=()=>dl(slug(matchName())+"-tagging.json",
+  JSON.stringify({match:{us:$("m-us").value,them:$("m-them").value,date:$("m-date").value},cam,clips},null,1),"application/json");
+$("loadwork").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);
+    clips=(d.clips||[]).map(c=>({...c,themes:c.themes||(c.theme?[c.theme]:[])}));
+    if(d.match){$("m-us").value=d.match.us||"";$("m-them").value=d.match.them||"";$("m-date").value=d.match.date||"";}
+    if(d.cam)Object.assign(cam,d.cam),sync();
+    active=-1;renderPanel();$("status").textContent=clips.length+" clips loaded";
+  }catch(err){$("status").textContent="Not a saved session file";}};
+  r.readAsText(f);
+};
+function exportMd(){
+  if(!clips.length){$("status").textContent="Nothing to export yet";return;}
+  const themes={},moments={};let bad=0;
+  clips.forEach(c=>{(c.themes||[]).forEach(t=>themes[t]=(themes[t]||0)+1);
+    moments[c.moment]=(moments[c.moment]||0)+1;if(c.verdict==="bad")bad++;});
+  const top=Object.entries(themes).sort((a,b)=>b[1]-a[1]),pattern=top.filter(([,n])=>n>=3);
+  const md=`---
+tags: [type/match, analysis/game]
+opponent: "${$("m-them").value.trim()}"
+date: ${$("m-date").value.trim()}
+clips: ${clips.length}
+type: match
+status: coded
+---
+# ${matchName()}
+
+> [!abstract] Coded from video
+> ${clips.length} clips · ${bad} broke · ${top.length} themes touched
+
+## Tally
+| Theme | Clips | Broke | Pattern? |
+|---|---|---|---|
+${top.map(([t,n])=>`| ${t} | ${n} | ${clips.filter(c=>(c.themes||[]).includes(t)&&c.verdict==="bad").length} | ${n>=3?"yes":"event"} |`).join("\n")}
+
+By moment: ${Object.entries(moments).sort((a,b)=>b[1]-a[1]).map(([m,n])=>`${m} ${n}`).join(" · ")}
+
+> [!important] The frequency rule
+> 3+ clips, or 2+ matches. Below that it is an event, not a [[Schemes|scheme]] — leave it out of the report.
+
+## Findings → training
+${pattern.length?`| Finding | Whose problem | Day | Session query |
+|---|---|---|---|
+${pattern.map(([t,n])=>`| ${t} — ${n} clips | IFP / LGF / UCF | | \`theme.contains("${t}")\` |`).join("\n")}`:`_Nothing cleared the frequency rule yet._`}
+
+Take each row through [[From Analysis to Training]].
+
+## Clip log
+| Clip | Who | Phase | Moment | Themes | Player | Verdict | Frame | Note |
+|---|---|---|---|---|---|---|---|---|
+${clips.map(c=>`| ${fmt(c.t)} | ${c.team} | ${c.phase} | ${c.moment} | ${(c.themes||[]).join(", ")} | ${c.player||""} | ${c.verdict} | ${c.img?"![["+c.img+"]]":""} | ${(c.note||"").replace(/\|/g,"/")} |`).join("\n")}
+
+## Related
+- [[Video Analysis Workflow]] · [[Post-Game Analysis]] · [[Session Bank]] · [[Tag Vocabulary]]
+`;
+  dl(slug(matchName())+".md",md);
+  $("status").textContent="exported";
+}
+
+/* ============ keys ============ */
+addEventListener("keydown",e=>{
+  if(/^(INPUT|TEXTAREA)$/.test(e.target.tagName)){
+    if(e.key==="Enter"){e.preventDefault();tag();e.target.blur();}
+    return;
+  }
+  const k=e.key.toLowerCase();
+  if(e.key===" "){e.preventDefault();toggle();}
+  else if(k==="escape"){if(calStep){calStep=0;tip("Calibration cancelled");}else if(chain)endChain();else setTool("none");}
+  else if(k==="delete"||k==="backspace"){e.preventDefault();delSel();}
+  else if(k==="[")step(-1);else if(k==="]")step(1);
+  else if(k==="j")nudge(-3);else if(k==="l")nudge(3);
+  else if(k==="u")setCtx("team","us");else if(k==="t")setCtx("team","them");
+  else if(k==="a")setCtx("phase","attacking");else if(k==="d")setCtx("phase","defensive");
+  else if(k==="q")setCtx("verdict","good");else if(k==="w")setCtx("verdict","bad");else if(k==="e")setCtx("verdict","neutral");
+  else if(["1","2","3","4"].includes(k))setCtx("moment",["buildup","progression","finishing","set-pieces"][+k-1]);
+  else if(k==="v")setTool("select");else if(k==="k")setTool("link");
+  else if(k==="r")setTool("arrow");else if(k==="p")setTool("pen");else if(k==="b")setTool("rect");
+  else if(k==="c")setTool("ring");else if(k==="m")setTool("marker");
+  else if(k==="f")toggleFill();else if(k==="y")toggleDash();
+  else if(k==="z")undo();else if(k==="x")clearShapes();else if(k==="s")snapshot();
+  else if(k==="enter"){e.preventDefault();tag();}
+});
+sync();renderPanel();
+</script>
+</body></html>
