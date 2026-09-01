@@ -21,16 +21,25 @@ Supabase — only reset.
 
 ## Running it
 
-Two commands. The first has to be running before the second means anything:
+It is deployed: **https://match-analysis-site1.vercel.app**
+
+Open it and press **Cloud** → your address → follow the link. Or skip the mailer
+entirely:
 
 ```bash
-node tools/serve.mjs        # http://localhost:3000
 node tools/signin-link.mjs --open
 ```
 
-`serve.mjs` is not a convenience. Signing in *needs* http: the link has to come
-back to an address on the project's allow-list, and `file://` can never be one.
-Port 3000 is on that list.
+To work on it locally instead:
+
+```bash
+node tools/serve.mjs                        # http://localhost:3000
+node tools/signin-link.mjs --local --open
+```
+
+A local server is required for that — signing in *needs* http, because the link
+has to come back to an address on the project's allow-list and `file://` can
+never be one. Port 3000 is on that list, as is the deployed origin.
 
 `signin-link.mjs` mints a sign-in link with the service key and opens it — same
 link the email would carry, without the email. Single use, an hour to live. That
