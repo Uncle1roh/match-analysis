@@ -13,7 +13,8 @@
      node tools/signin-link.mjs                    # the only approved coach
      node tools/signin-link.mjs you@club.com       # a specific one
      node tools/signin-link.mjs --open             # and open the browser too
-     node tools/signin-link.mjs --port 8931        # if you serve on another port
+     node tools/signin-link.mjs --local            # against a local server instead
+     node tools/signin-link.mjs --port 8931        # ...on a port other than 3000
 */
 import fs from 'fs';
 import { execFile } from 'child_process';
@@ -31,6 +32,9 @@ const open = args.includes('--open');
 const portAt = args.indexOf('--port');
 const port = portAt >= 0 ? args[portAt + 1] : '3000';
 const page = args.find(a => a === 'finder' || a === 'tagger') || 'tagger';
+/* the deployed site is the normal target now; --local is for working on it */
+const LIVE = 'https://match-analysis-site1.vercel.app';
+const site = args.includes('--local') ? `http://localhost:${port}` : LIVE;
 let email = args.find(a => a.includes('@'));
 
 if (!email) {
@@ -47,7 +51,7 @@ if (!email) {
   email = rows[0].email;
 }
 
-const dest = `http://localhost:${port}/${page}.html`;
+const dest = `${site}/${page}`;
 const gen = await j(await fetch(`${URL_BASE}/auth/v1/admin/generate_link`, {
   method: 'POST', headers: H,
   body: JSON.stringify({ type: 'magiclink', email, options: { redirect_to: dest } })
@@ -64,8 +68,8 @@ const link = `${URL_BASE}/auth/v1/verify?token=${gen.hashed_token}`
 
 console.log(`signing in ${email} at ${dest}`);
 console.log('\n' + link + '\n');
-console.log('Single use, good for an hour. Make sure the site is running first:');
-console.log('  node tools/serve.mjs');
+console.log('Single use, good for an hour.');
+if (args.includes('--local')) console.log('Start the site first:  node tools/serve.mjs');
 
 if (open) {
   /* NOT `cmd /c start`: cmd reads & as a command separator, so it hands the

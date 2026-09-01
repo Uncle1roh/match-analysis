@@ -10,11 +10,13 @@ enable_signup = false
 # Where a sign-in link is allowed to land. The tagger and the finder both send
 # the coach back to the page they started on, so every address the site is
 # served from has to be listed.
-site_url = "http://localhost:3000"
+site_url = "https://match-analysis-site1.vercel.app"
 # A sign-in link is refused unless it lands on one of these, so every port
 # you might serve the folder from has to be listed. Add your deployed
 # address when there is one, then run `supabase config push` again.
 additional_redirect_urls = [
+  "https://match-analysis-site1.vercel.app/**",
+  "https://match-analysis-site1-didaskodeve-gmailcoms-projects.vercel.app/**",
   "http://localhost:3000/**",
   "http://localhost:5173/**",
   "http://localhost:8000/**",

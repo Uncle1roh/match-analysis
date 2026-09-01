@@ -1,7 +1,18 @@
-.check
+# Anything not listed here is uploaded AND servable as a static file.
+# .vercelignore replaces .gitignore for deploys, so secrets must be named again.
+.env
+.env.*
+.git
+
+# the service key and the course material live in these
 tools
 supabase
 pages
 Training Tasks.pdf
+
+# local test rig
+.check
+
+# notes, not site
 README.md
 SETUP.md

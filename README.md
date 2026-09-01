@@ -54,16 +54,15 @@ Sign-ups are off — `config.js` is in a public repo, so open registration would
 have handed the course to anyone who found it. Accounts are made with
 `node tools/approve-coach.mjs them@club.com`.
 
-### Running it
+### Using it
 
-```bash
-node tools/serve.mjs                 # http://localhost:3000
-node tools/signin-link.mjs --open    # signs you in, no email round trip
-```
+It is deployed: **https://match-analysis-site1.vercel.app**
 
-The server is required, not a nicety: a sign-in link has to return to an address
-on the project's allow-list and `file://` can never be one. Sign in once and the
-session sticks.
+Sign in from the Cloud button, or skip the mailer with
+`node tools/signin-link.mjs --open`. Sign in once and the session sticks.
+
+For working on it locally, `node tools/serve.mjs` serves port 3000 and
+`node tools/signin-link.mjs --local --open` signs you in there.
 
 The match video is never uploaded, with or without a cloud. It is gigabytes,
 and it is yours.
