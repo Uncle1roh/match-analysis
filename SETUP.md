@@ -181,6 +181,7 @@ npm i --no-save --prefix .check jsdom
 node .check/smoke.mjs     # the tagger, 42 checks
 node .check/finder.mjs    # the finder, 13 checks
 node .check/cloud.mjs     # the cloud paths against a fake Supabase, 52 checks
+node .check/browser.mjs   # what Edge/Chrome actually paint, 19 checks
 node .check/live.mjs      # against the real project, 25 checks — needs .env
 ```
 

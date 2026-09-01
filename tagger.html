@@ -14,6 +14,12 @@
   --cond:"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
+/* The browser hides [hidden] from its own stylesheet, and any author rule that
+   sets display beats it — so .modal{display:flex} on a hidden element paints it
+   anyway. Every hidden thing here (rail, transport, sheets, the answer strip)
+   sets display, so state this once, loudly. */
+[hidden]{display:none!important}
+
 html,body{margin:0;height:100%;overflow:hidden}
 body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--cond);display:flex;flex-direction:column}
 button{font-family:var(--cond)}

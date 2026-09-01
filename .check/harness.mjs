@@ -4,21 +4,7 @@
 import fs from 'fs';
 import { JSDOM } from 'jsdom';
 
-/* ---------------------------------------------------------------- assert -- */
-export function reporter() {
-  const r = { ok: 0, bad: 0 };
-  r.is = (label, got, want) => {
-    const pass = JSON.stringify(got) === JSON.stringify(want);
-    pass ? r.ok++ : r.bad++;
-    console.log((pass ? 'PASS ' : 'FAIL ') + label + (pass ? '' : `  got ${JSON.stringify(got)} want ${JSON.stringify(want)}`));
-  };
-  r.okay = (label, cond, extra = '') => {
-    cond ? r.ok++ : r.bad++;
-    console.log((cond ? 'PASS ' : 'FAIL ') + label + (cond ? '' : '  ' + extra));
-  };
-  r.done = () => { console.log(`\n${r.ok} passed, ${r.bad} failed`); process.exit(r.bad ? 1 : 0); };
-  return r;
-}
+export { reporter } from './report.mjs';
 
 /* ------------------------------------------------------- a fake Supabase -- */
 /* Enough of the client for the two tools: OTP auth, the four table verbs the
