@@ -1,0 +1,51 @@
+# Pushed to the linked project with `supabase config push`.
+# Only the auth settings the two tools depend on are set here; everything else
+# is left at whatever the project already has.
+
+[auth]
+# No self-registration. The publishable key sits in a public repo, so open
+# sign-up would let anyone give themselves an account and read the course.
+# Accounts are made with the service role: node tools/approve-coach.mjs
+enable_signup = false
+# Where a sign-in link is allowed to land. The tagger and the finder both send
+# the coach back to the page they started on, so every address the site is
+# served from has to be listed.
+site_url = "http://localhost:3000"
+# A sign-in link is refused unless it lands on one of these, so every port
+# you might serve the folder from has to be listed. Add your deployed
+# address when there is one, then run `supabase config push` again.
+additional_redirect_urls = [
+  "http://localhost:3000/**",
+  "http://localhost:5173/**",
+  "http://localhost:8000/**",
+  "http://localhost:8080/**",
+  "http://localhost:8931/**",
+  "http://127.0.0.1:3000/**",
+  "http://127.0.0.1:8931/**",
+]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+
+[auth.email]
+# The email provider itself stays on — this flag governs the provider, not
+# who may register. Turning it off locks out existing coaches too.
+enable_signup = true
+# No separate confirmation step: following the sign-in link is the check.
+enable_confirmations = false
+otp_length = 6
+otp_expiry = 3600
+
+# The default magic-link mail carries only a link, and on the free plan it
+# cannot be replaced: the API answers 400 with "Email template modification
+# is not available for free tier projects using the default email provider".
+#
+# So sign-in is by link for now. The six-digit code box in both tools starts
+# working the moment you do either of these, at which point uncomment the
+# block below and run `supabase config push` again:
+#   · add custom SMTP under Authentication -> Emails (also lifts the stock
+#     provider's ~2 mails/hour ceiling, which a real squad will hit)
+#   · or move the project to Pro
+#
+# [auth.email.template.magic_link]
+# subject = "Your match analysis sign-in code"
+# content_path = "./supabase/templates/magic_link.html"

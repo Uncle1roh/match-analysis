@@ -1,0 +1,20 @@
+# 243 MB of MBP course material. It sits beside these pages and is read
+# locally by both tools — it is never committed and never uploaded.
+Training Tasks.pdf
+
+# the same book, one PDF per session page, built by tools/split-pdf.mjs
+# and pushed to Supabase Storage. ~250 MB, and just as much not ours.
+pages/
+
+# never. the service role key ignores every RLS policy in the migration.
+.env
+.env.*
+!.env.example
+
+# local test rig and build helpers (jsdom, pdf-lib live in here)
+.check/node_modules/
+tools/node_modules/
+tools/split.log
+
+# Supabase CLI scratch: machine-local link state and version pins
+supabase/.temp/

@@ -41,8 +41,8 @@ main{flex:1;display:flex;min-height:0}
 .drop b{display:block;font-size:20px;color:#E9EDE9;margin-bottom:8px;font-weight:700}
 .drop small{display:block;margin-top:10px;color:#678074;font-size:12px}
 
-aside{flex:0 0 322px;border-left:1px solid var(--ink);background:var(--card);display:flex;flex-direction:column;min-height:0}
-.asidehead{padding:8px 12px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px;flex:0 0 auto}
+aside{flex:0 0 344px;border-left:1px solid var(--ink);background:var(--card);display:flex;flex-direction:column;min-height:0}
+.asidehead{padding:8px 12px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px;flex:0 0 auto;flex-wrap:wrap}
 .tabs{display:flex;gap:2px}
 .tabs button{font:10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;border:1px solid var(--rule);background:var(--chalk);cursor:pointer;color:var(--ink-2);border-radius:2px}
 .tabs button[aria-selected=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
@@ -109,10 +109,71 @@ aside{flex:0 0 322px;border-left:1px solid var(--ink);background:var(--card);dis
 .chip.them[aria-pressed=true]{background:#C2582F;border-color:#C2582F}
 .themebar{background:var(--card);border-top:1px dashed var(--rule);padding:7px 12px;display:flex;gap:4px;flex-wrap:wrap;align-items:center;flex:0 0 auto;max-height:84px;overflow-y:auto}
 .themebar .chip{padding:6px 8px;font-size:11.5px}
-#player,#note{font:12px var(--cond);padding:7px 9px;border:1px solid var(--rule);background:var(--chalk);border-radius:2px;color:var(--ink)}
+#player,#note,#level{font:12px var(--cond);padding:7px 9px;border:1px solid var(--rule);background:var(--chalk);border-radius:2px;color:var(--ink)}
+#level{padding:7px 5px;max-width:152px}
 #player{width:92px} #note{flex:1;min-width:150px}
 kbd{font:9px var(--mono);border:1px solid var(--rule);padding:1px 3px;background:var(--chalk);border-radius:2px;color:var(--ink-3)}
 .hint{font-size:11px;color:var(--ink-3)}
+.answer{background:#EDF3EF;border-top:1px solid var(--rule);padding:7px 12px;display:flex;align-items:center;gap:9px;flex:0 0 auto;font-size:12.5px;color:var(--ink-2)}
+.answer b{font:9px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--hit);font-weight:400;white-space:nowrap}
+.answer em{font-style:normal;color:var(--ink);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.answer button{font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:6px 9px;border:1px solid var(--rule);
+  background:var(--card);cursor:pointer;border-radius:2px;color:var(--ink-2);white-space:nowrap}
+.answer button:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* the session side: what the tags are worth in training */
+.tctx{display:flex;align-items:center;gap:6px;padding:7px 12px;border-bottom:1px solid var(--rule);background:var(--chalk);flex:0 0 auto}
+.tctx span{font:9px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.tctx select,.tctx input{font:11px var(--mono);padding:5px 6px;border:1px solid var(--rule);background:var(--card);border-radius:2px;color:var(--ink)}
+.tctx input{width:60px}
+.tctx .grow{flex:1}
+.for{padding:9px 12px;border-bottom:1px solid var(--rule);background:#EDF3EF;font-size:11.5px;color:var(--ink-2);line-height:1.5}
+.for b{font:12px var(--mono);color:var(--hit)}
+.for em{font-style:normal;color:var(--ink)}
+.for a{color:var(--ink-2);font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase;display:inline-block;margin-top:5px}
+.ses{padding:10px 12px;border-bottom:1px solid var(--rule)}
+.ses:hover{background:var(--chalk)}
+.ses .r1{display:flex;gap:7px;align-items:baseline}
+.ses .sc{font:11px var(--mono);color:var(--hit);font-weight:700;white-space:nowrap}
+.ses h5{margin:0;font-size:13px;line-height:1.3;font-weight:700;flex:1}
+.ses .ob{font-size:11.5px;color:var(--ink-3);line-height:1.4;margin-top:3px}
+.ses .mt{font:10px/1.5 var(--mono);color:var(--ink-3);margin-top:4px}
+.ses .wh{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+.ses .wh i{font-style:normal;font:9px var(--mono);text-transform:uppercase;padding:2px 5px;border:1px solid var(--rule);border-radius:2px;color:var(--ink-3)}
+.ses .wh i.on{border-color:var(--hit);color:var(--hit)}
+.ses .pg{margin-top:7px;font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:6px 9px;
+  border:1px solid var(--rule);background:var(--chalk);cursor:pointer;border-radius:2px;color:var(--ink-2)}
+.ses .pg:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.clip .go{position:absolute;right:6px;bottom:7px;background:none;border:1px solid var(--rule);border-radius:2px;
+  color:var(--ink-3);cursor:pointer;font:9px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 6px;opacity:0}
+.clip:hover .go{opacity:1}
+.clip .go:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* the cloud sheet: sign in, and the matches already saved */
+.sheet.small{width:min(560px,96vw);height:auto;max-height:90vh}
+.cbody{padding:18px;overflow-y:auto}
+.cbody h4{margin:0 0 4px;font:10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:400}
+.cbody p{margin:0 0 14px;font-size:12.5px;color:var(--ink-2);line-height:1.55}
+.cbody .row{display:flex;gap:7px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.cbody input{flex:1;min-width:170px;font:13px var(--cond);padding:9px 10px;border:1px solid var(--rule);background:var(--chalk);border-radius:2px;color:var(--ink)}
+.cbody .said{font-size:12px;color:var(--ink-2);min-height:17px;margin:2px 0 12px}
+.cbody .said.bad{color:#C2582F}
+.mlist{border-top:1px solid var(--rule);margin-top:6px}
+.mrow{display:flex;align-items:center;gap:9px;padding:9px 2px;border-bottom:1px solid var(--rule)}
+.mrow .nm{flex:1;min-width:0}
+.mrow .nm b{display:block;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .nm span{font:10px var(--mono);color:var(--ink-3);letter-spacing:.04em}
+.mrow button{font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:6px 9px;border:1px solid var(--rule);
+  background:var(--chalk);cursor:pointer;border-radius:2px;color:var(--ink-2)}
+.mrow button:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mrow button.dg:hover{background:#C2582F;border-color:#C2582F}
+#cloudbtn.in{border-color:var(--hit);color:var(--hit)}
+#sync{font:10px var(--mono);color:var(--ink-3);letter-spacing:.04em;white-space:nowrap}
+/* the PDF page, opened in place */
+.modal{position:fixed;inset:0;background:rgba(10,22,18,.78);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px}
+.sheet{background:var(--card);border:1px solid var(--ink);width:min(1100px,96vw);height:min(93vh,1020px);display:flex;flex-direction:column}
+.mhead{display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid var(--rule)}
+.mhead b{font:12px var(--mono);letter-spacing:.06em;color:var(--ink-2);font-weight:400;flex:1}
+#mframe{flex:1;width:100%;border:none;background:var(--chalk)}
+.mfoot{padding:8px 13px;border-top:1px solid var(--rule);font-size:11px;color:var(--ink-3)}
 @media(max-width:900px){
   main{flex-direction:column}
   aside{flex:0 0 40vh;border-left:none;border-top:1px solid var(--ink)}
@@ -133,6 +194,8 @@ kbd{font:9px var(--mono);border:1px solid var(--rule);padding:1px 3px;background
   <button class="btn g" onclick="$('file').click()">Video</button>
   <button class="btn g" onclick="saveWork()">Save</button>
   <button class="btn g" onclick="$('loadwork').click()">Load</button>
+  <button class="btn g" id="cloudbtn" onclick="openCloud()">Cloud</button>
+  <span id="sync"></span>
   <button class="btn" onclick="exportMd()">Export</button>
 </header>
 
@@ -226,10 +289,14 @@ kbd{font:9px var(--mono);border:1px solid var(--rule);padding:1px 3px;background
       <button class="chip" data-k="verdict" data-v="bad"     aria-pressed="false">Broke <kbd>W</kbd></button>
       <button class="chip" data-k="verdict" data-v="neutral" aria-pressed="true">Neutral <kbd>E</kbd></button>
     </div>
+    <div class="grp"><span>Whose</span>
+      <select id="level" title="Whose problem is it &mdash; the fundamental level the session bank sorts by"></select>
+    </div>
     <input id="player" type="text" placeholder="Player">
     <input id="note" type="text" placeholder="Note — Enter to tag">
     <button class="btn" onclick="tag()">Tag now ⏎</button>
   </div>
+  <div class="answer" id="answer" hidden></div>
   <div class="themebar" id="themebar"></div>
 </div>
 
@@ -238,32 +305,74 @@ kbd{font:9px var(--mono);border:1px solid var(--rule);padding:1px 3px;background
     <div class="tabs">
       <button id="tab-clips" aria-selected="true"  onclick="setTab('clips')">Clips</button>
       <button id="tab-tally" aria-selected="false" onclick="setTab('tally')">Tally</button>
+      <button id="tab-ses" aria-selected="false" onclick="setTab('sessions')">Sessions</button>
     </div>
     <b id="n">0</b>
     <span class="spacer"></span>
     <span class="hint">lead-in <input id="lead" type="number" value="6" min="0" max="30" style="width:44px;font:11px var(--mono);padding:4px;border:1px solid var(--rule);background:var(--chalk);border-radius:2px">s</span>
   </div>
+  <div class="tctx" id="tctx" hidden>
+    <span>Train on</span>
+    <select id="tmd" title="Which day of the microcycle"></select>
+    <input id="tsq" type="number" min="4" max="30" placeholder="squad" title="Players at training">
+    <span class="grow"></span>
+    <span id="sescount"></span>
+  </div>
   <div id="panel"></div>
 </aside>
 </main>
 
+<div class="modal" id="modal" hidden>
+  <div class="sheet">
+    <div class="mhead">
+      <b id="mtitle"></b>
+      <button class="btn g" id="mtab">Open in a new tab</button>
+      <button class="btn g" onclick="closePage()">Close &times;</button>
+    </div>
+    <iframe id="mframe" title="Session page"></iframe>
+    <div class="mfoot" id="mfoot"></div>
+  </div>
+</div>
+
+<div class="modal" id="cloudmodal" hidden>
+  <div class="sheet small">
+    <div class="mhead">
+      <b>Cloud</b>
+      <button class="btn g" onclick="closeCloud()">Close &times;</button>
+    </div>
+    <div class="cbody" id="cbody"></div>
+  </div>
+</div>
+
 <input type="file" id="file" accept="video/*" hidden>
 <input type="file" id="loadwork" accept=".json" hidden>
+<input type="file" id="pdffile" accept="application/pdf" hidden>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="cloud.js"></script>
+<script src="sessions.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const THEMES=["passing-control", "finishing", "pressing", "support", "perception", "width", "depth", "crossing", "marking", "duel-1v1", "compactness", "possession", "goalkeeper", "switch", "intervals", "superiority", "counterattack", "aerial", "transition", "second-ball"];
+/* THEMES, MOMENTS, PHASES, LEVELS, THEME_LABEL, DAYS, S and rankSessions()
+   all come from sessions.js — the same list the session finder searches. */
 const COLORS=[["them","#FF7A45"],["us","#37C08A"],["key","#FFD447"],["plain","#FFFFFF"]];
 /* base = circle radius as a fraction of frame width at the bottom of frame
    h    = vanishing line of the GROUND PLANE (often above the visible horizon, can be negative)
    f0   = ellipse ry/rx at the bottom of frame                                              */
 const PRESETS={main:{h:.06,f0:.55,base:.040,ortho:false},low:{h:.20,f0:.30,base:.045,ortho:false},
                goal:{h:.12,f0:.45,base:.042,ortho:false},drone:{h:0,f0:1,base:.030,ortho:true}};
-const ctx={team:"them",phase:"attacking",moment:"progression",verdict:"neutral"};
+const ctx={team:"them",phase:"attacking",moment:"progression",verdict:"neutral",level:""};
+/* what the session bank needs on top of the clip: which day of the week the
+   training falls on, and how many players will be there.                   */
+const train={md:"",players:""};
+/* the cloud copy of this match, once it has one */
+let cloudId=null,cloudDirty=false,cloudTimer=null,videoName="";
 const cam={h:.06,f0:.55,base:.040,ortho:false};
 let clips=[],shapes=[],tool="none",color="#FF7A45",fillOn=false,dashOn=false,
     draft=null,chain=null,sel=-1,drag=null,pendingImage=null,tab="clips",markerN=1,
-    camOpen=false,calStep=0,calPts=[],active=-1,tipTimer=null;
+    camOpen=false,calStep=0,calPts=[],active=-1,tipTimer=null,shapeTime=null;
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch]));
 const v=$("v"),cv=$("c"),stage=$("stage"),g=cv.getContext("2d");
 
 /* ============ video ============ */
@@ -276,7 +385,7 @@ function load(f){
   if(!f)return;
   v.src=URL.createObjectURL(f);v.hidden=false;cv.hidden=false;
   $("drop").style.display="none";$("rail").hidden=false;$("transport").hidden=false;
-  $("status").textContent=f.name.slice(0,30);
+  videoName=f.name;$("status").textContent=f.name.slice(0,30);
   v.onloadedmetadata=()=>{$("dur").textContent="of "+fmt(v.duration);fit();};
 }
 v.addEventListener("timeupdate",()=>$("clock").textContent=fmt(v.currentTime));
@@ -451,13 +560,29 @@ function handles(s,W,H){
   if(s.k==="pen")return [{x:s.pts[0][0]*W,y:s.pts[0][1]*H,h:"move"}];
   return [{x:s.x*W,y:s.y*H,h:"a"},{x:s.x2*W,y:s.y2*H,h:"b"}];
 }
+/* A drawing belongs to the frame it was made on. Nothing is painted over
+   moving video, and leaving that second throws the drawing away — tag the
+   moment or save the frame first if you want to keep it.                  */
+const FRAME_EPS=.34;
+function markShapeTime(){if(shapeTime===null)shapeTime=v.currentTime;}
+function offFrame(){return shapeTime!==null&&Math.abs(v.currentTime-shapeTime)>FRAME_EPS;}
+function dropShapes(){
+  const had=shapes.length||chain||draft;
+  shapes=[];chain=null;draft=null;sel=-1;markerN=1;shapeTime=null;
+  draw();
+  if(had)tip("Drawing cleared — it lives only on the frame you paused at. Tag the moment, or ⎙ the frame, to keep it.");
+}
 function draw(){
   g.clearRect(0,0,cv.width,cv.height);
+  if(!v.paused)return;
   const list=shapes.slice();
   if(chain)list.push(chain);
   if(draft)list.push(draft);
   render(g,cv.width,cv.height,list,sel,camOpen||calStep>0);
 }
+v.addEventListener("play",dropShapes);
+v.addEventListener("pause",()=>draw());
+v.addEventListener("seeked",()=>{if(offFrame())dropShapes();else draw();});
 
 /* ============ hit testing ============ */
 function hitShape(s,px,py,W,H){
@@ -500,6 +625,7 @@ cv.addEventListener("pointerdown",e=>{
     drag=got?{i:got.i,h:got.h,ox:n.x,oy:n.y,snap:JSON.parse(JSON.stringify(shapes[got.i]))}:null;
     draw();return;
   }
+  markShapeTime();
   if(tool==="link"){
     if(!chain)chain={k:"link",c:color,r:1,fill:fillOn,dash:dashOn,nodes:[]};
     chain.nodes.push({x:n.x,y:n.y});draw();return;
@@ -560,7 +686,7 @@ function endChain(){
   chain=null;draw();
 }
 function undo(){if(chain&&chain.nodes.length){chain.nodes.pop();if(!chain.nodes.length)chain=null;}else shapes.pop();sel=-1;draw();}
-function clearShapes(){shapes=[];chain=null;sel=-1;markerN=1;draw();}
+function clearShapes(){shapes=[];chain=null;sel=-1;markerN=1;shapeTime=null;draw();}
 function delSel(){if(sel>=0){shapes.splice(sel,1);sel=-1;draw();}}
 
 /* ============ snapshot ============ */
@@ -582,7 +708,16 @@ function snapshot(){
 document.querySelectorAll(".chip[data-k]").forEach(b=>b.onclick=()=>setCtx(b.dataset.k,b.dataset.v));
 function setCtx(k,val){ctx[k]=val;document.querySelectorAll(`.chip[data-k="${k}"]`).forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===val));}
 $("themebar").innerHTML=`<span style="font:9px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)">Themes — pick any, then tag</span>`+
-  THEMES.map(t=>`<button class="chip th" data-t="${t}" aria-pressed="false">${t}</button>`).join("");
+  THEMES.map(t=>`<button class="chip th" data-t="${t}" aria-pressed="false" title="${t}">${THEME_LABEL[t]||t}</button>`).join("");
+
+/* question 4 of the finder — whose problem is it */
+$("level").innerHTML=`<option value="">Level: any</option>`+LEVELS.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
+$("level").onchange=()=>{ctx.level=$("level").value;if(tab==="sessions")renderPanel();};
+
+/* questions 5 and 6 — the day of the microcycle and the size of the squad */
+$("tmd").innerHTML=`<option value="">Any day</option>`+DAYS.filter(([d])=>d).map(([d,l])=>`<option value="${d}">${d} · ${l}</option>`).join("");
+$("tmd").onchange=()=>{train.md=$("tmd").value;renderPanel();};
+$("tsq").oninput=()=>{train.players=$("tsq").value;renderPanel();};
 document.querySelectorAll(".chip.th").forEach(b=>b.onclick=()=>b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true"));
 const chosenThemes=()=>[...document.querySelectorAll('.chip.th[aria-pressed="true"]')].map(b=>b.dataset.t);
 const clearThemes=()=>document.querySelectorAll(".chip.th").forEach(b=>b.setAttribute("aria-pressed","false"));
@@ -591,22 +726,90 @@ function tag(){
   if(!v.src){$("status").textContent="Load a video first";return;}
   endChain();
   const lead=parseInt($("lead").value||"0",10);
-  clips.push({t:Math.max(0,v.currentTime-lead),tagged:v.currentTime,team:ctx.team,phase:ctx.phase,
-    moment:ctx.moment,verdict:ctx.verdict,themes:chosenThemes(),player:$("player").value.trim(),
+  const c={t:Math.max(0,v.currentTime-lead),tagged:v.currentTime,team:ctx.team,phase:ctx.phase,
+    moment:ctx.moment,verdict:ctx.verdict,level:ctx.level,themes:chosenThemes(),player:$("player").value.trim(),
     note:$("note").value.trim(),img:pendingImage||"",
-    shapes:shapes.length?JSON.parse(JSON.stringify(shapes)):null,cam:{...cam}});
+    shapes:shapes.length?JSON.parse(JSON.stringify(shapes)):null,cam:{...cam}};
+  clips.push(c);clips.sort((a,b)=>a.t-b.t);active=clips.indexOf(c);
   pendingImage=null;$("note").value="";clearThemes();
-  renderPanel();$("status").textContent="tagged "+fmt(v.currentTime);
+  /* the answer to a tag is a training session — say so straight away */
+  answerFor(c);renderPanel();markDirty();
+  $("status").textContent="tagged "+fmt(v.currentTime);
 }
-const del=(i,e)=>{if(e)e.stopPropagation();clips.splice(i,1);if(active===i)active=-1;renderPanel();};
+
+/* ============ tags in, sessions out ============ */
+const activeClip=()=>clips.length?(active>=0&&active<clips.length?clips[active]:clips[clips.length-1]):null;
+const clipQuery=c=>({moments:[c.moment],phases:[c.phase],themes:c.themes||[],
+                     levels:[c.level||""],md:train.md,players:train.players});
+function finderLink(c){
+  const p=new URLSearchParams();
+  p.set("m",c.moment);p.set("p",c.phase);
+  if((c.themes||[]).length)p.set("t",c.themes.join(","));
+  if(c.level)p.set("l",c.level);
+  if(train.md)p.set("d",train.md);
+  if(train.players)p.set("n",train.players);
+  return "finder.html#"+p.toString();
+}
+function showSessions(i,e){if(e)e.stopPropagation();recall(i);setTab("sessions");}
+/* one line under the tagbar: the session this tag asks for, and the page it is on */
+function answerFor(c){
+  const a=$("answer");
+  if(!c){a.hidden=true;return;}
+  const rows=rankSessions(clipQuery(c));
+  a.hidden=false;
+  a.innerHTML=rows.length
+    ? `<b>trains</b><em title="${esc(rows[0].s.objective||rows[0].s.title)}">${esc(rows[0].s.title)}</em>`+
+      `<button onclick="openPage(${rows[0].s.page})">Open p.${rows[0].s.page}</button>`+
+      (rows.length>1?`<button onclick="setTab('sessions')">${rows.length-1} more &rarr;</button>`:"")
+    : `<b>trains</b><em>nothing in the bank matches that combination</em>`+
+      `<button onclick="setTab('sessions')">Sessions</button>`;
+}
+
+/* ---- the session PDF that sits beside this file ---- */
+let pdfURL=encodeURI(BUNDLED_PDF),pdfName=BUNDLED_PDF,pdfOwn=false;
+/* If it is not actually there, fall back to the picker. A HEAD request throws
+   under file://, where we cannot tell — so the bundled copy stays the default. */
+try{ fetch(pdfURL,{method:"HEAD"}).then(r=>{if(!r.ok&&!pdfOwn)pdfURL=null;}).catch(()=>{}); }catch(e){}
+$("pdffile").onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  if(pdfOwn&&pdfURL) URL.revokeObjectURL(pdfURL);
+  pdfURL=URL.createObjectURL(f); pdfName=f.name; pdfOwn=true;
+  $("status").textContent=f.name+" — page links are live";
+};
+/* The bank first, one page at a time and signed for this coach only; the
+   local PDF second; the picker last. The caller never has to know which. */
+async function openPage(n){
+  const signed=await CLOUD.pageUrl(n);
+  const url=signed?signed+"#view=FitH":(pdfURL?pdfURL+"#page="+n+"&view=FitH":null);
+  if(!url){
+    $("status").textContent=CLOUD.user
+      ? "this account is not on the training-bank list — ask to be added, or pick your own PDF"
+      : BUNDLED_PDF+" is not beside this page — pick your copy";
+    $("pdffile").click();return;
+  }
+  $("mtitle").textContent="Session page "+n;
+  $("mframe").src=url;
+  $("mtab").onclick=()=>window.open(url,"_blank");
+  $("mfoot").textContent=signed
+    ? "Page "+n+" on its own, signed for you and good for under an hour. None of the rest of the bank is downloaded."
+    : "Read from "+pdfName+" on this machine — nothing is uploaded. If it opens at the front of the document instead of the page, use “Open in a new tab”: some browsers ignore page anchors inside a frame.";
+  $("modal").hidden=false;
+}
+function closePage(){$("modal").hidden=true;$("mframe").src="about:blank";}
+$("modal").addEventListener("click",e=>{if(e.target.id==="modal")closePage();});
+const del=(i,e)=>{if(e)e.stopPropagation();clips.splice(i,1);
+  if(active===i)active=-1; else if(active>i)active--;
+  answerFor(activeClip());renderPanel();markDirty();};
 function recall(i){
   const c=clips[i];active=i;
-  v.currentTime=c.tagged;v.pause();
+  v.pause();v.currentTime=c.tagged;
   if(c.cam)Object.assign(cam,c.cam),sync();
   shapes=c.shapes?JSON.parse(JSON.stringify(c.shapes)):[];
+  shapeTime=c.tagged;                 /* the drawing belongs to this frame again */
   markerN=shapes.filter(s=>s.k==="marker").length+1;
+  if(c.level!==undefined){ctx.level=c.level||"";$("level").value=ctx.level;}
   if(c.shapes)setTool("select");
-  renderPanel();draw();
+  answerFor(c);renderPanel();draw();
 }
 function step(d){
   if(!clips.length)return;
@@ -615,13 +818,20 @@ function step(d){
   recall(i);
   const el=document.querySelector(".clip.on");if(el)el.scrollIntoView({block:"nearest"});
 }
-const setTab=t=>{tab=t;$("tab-clips").setAttribute("aria-selected",t==="clips");$("tab-tally").setAttribute("aria-selected",t==="tally");renderPanel();};
+const setTab=t=>{tab=t;
+  $("tab-clips").setAttribute("aria-selected",t==="clips");
+  $("tab-tally").setAttribute("aria-selected",t==="tally");
+  $("tab-ses").setAttribute("aria-selected",t==="sessions");
+  $("tctx").hidden=(t!=="sessions");
+  renderPanel();};
 
 function renderPanel(){
   clips.sort((a,b)=>a.t-b.t);
   $("n").textContent=clips.length+" clip"+(clips.length===1?"":"s");
   const p=$("panel");
-  if(!clips.length){p.innerHTML=`<div class="empty"><b>No clips yet.</b><br>Set who / phase / moment, pick the themes that apply, then <b>Tag now</b>. Draw first and the drawing travels with the clip.<br><br>Once you have clips, <kbd>[</kbd> and <kbd>]</kbd> step back and forward through them.</div>`;return;}
+  if(!clips.length){
+    $("sescount").textContent="";
+    p.innerHTML=`<div class="empty"><b>No clips yet.</b><br>Set who / phase / moment / whose, pick the themes that apply, then <b>Tag now</b>. Draw first and the drawing travels with the clip — on screen it lives only on the frame you paused at.<br><br>Every tag comes back as a shortlist of training sessions under <b>Sessions</b>.<br><br>Once you have clips, <kbd>[</kbd> and <kbd>]</kbd> step back and forward through them.</div>`;return;}
   if(tab==="clips"){
     p.innerHTML=clips.map((c,i)=>`<div class="clip ${i===active?"on":""}" onclick="recall(${i})">
       <button class="x" onclick="del(${i},event)" aria-label="Delete clip">×</button>
@@ -629,11 +839,14 @@ function renderPanel(){
         <span class="pill ${c.team}">${c.team}</span>
         <span class="pill ${c.verdict==="bad"?"bad":c.verdict==="good"?"good":""}">${c.verdict==="bad"?"broke":c.verdict==="good"?"worked":"·"}</span>
         ${c.shapes?'<span class="pill" title="drawing">✎</span>':""}${c.img?'<span class="pill" title="frame saved">⎙</span>':""}</div>
-      <div class="mo">${c.moment} · ${c.phase}${c.player?" · #"+c.player:""}</div>
-      ${(c.themes||[]).length?`<div class="th">${c.themes.join(", ")}</div>`:""}
-      ${c.note?`<div class="nt">${c.note}</div>`:""}
+      <div class="mo">${c.moment} · ${c.phase}${c.level?" · "+c.level:""}${c.player?" · #"+c.player:""}</div>
+      ${(c.themes||[]).length?`<div class="th">${c.themes.map(x=>THEME_LABEL[x]||x).join(", ")}</div>`:""}
+      ${c.note?`<div class="nt">${esc(c.note)}</div>`:""}
+      <button class="go" onclick="showSessions(${i},event)" title="Sessions that train this">sessions &rarr;</button>
     </div>`).join("");
-  }else{
+  }else if(tab==="sessions"){ renderSessions(); }
+  else{
+    $("sescount").textContent="";
     const by={};
     clips.forEach(c=>{(c.themes&&c.themes.length?c.themes:["untagged"]).forEach(t=>{
       const k=t+" · "+c.moment;by[k]=by[k]||{n:0,bad:0};by[k].n++;if(c.verdict==="bad")by[k].bad++;});});
@@ -643,6 +856,141 @@ function renderPanel(){
        <span class="bar" style="width:${Math.round(x.n/max*100)}%"></span>`).join("")+`</div>`;
   }
 }
+
+/* One clip in, the ranked bank out. Same scorer the finder uses. */
+function renderSessions(){
+  const p=$("panel"),c=activeClip();
+  if(!c){$("sescount").textContent="";p.innerHTML=`<div class="empty">Tag a moment and the sessions that train it appear here.</div>`;return;}
+  const rows=rankSessions(clipQuery(c)),top=rows.slice(0,15);
+  $("sescount").textContent=rows.length+" found";
+  const th=(c.themes||[]).map(x=>THEME_LABEL[x]||x).join(", ")||"no theme picked";
+  const head=`<div class="for">
+      Sessions for <b>${fmt(c.t)}</b> — <em>${c.moment} · ${c.phase}${c.level?" · "+c.level:""}</em><br>${esc(th)}
+      <br><a href="${finderLink(c)}" target="_blank" rel="noopener">Open this search in the finder &rarr;</a>
+    </div>`;
+  if(!top.length){p.innerHTML=head+`<div class="empty"><b>Nothing in the bank matches all of that.</b><br>Drop the day, raise the squad size, or leave the level on <i>any</i>.</div>`;return;}
+  p.innerHTML=head+top.map(({s,pts,why})=>{
+    const w=new Set(why);
+    const tags=[...s.moments,...s.phase,...s.themes].slice(0,6)
+      .map(x=>`<i class="${w.has(x)?"on":""}">${esc(THEME_LABEL[x]||x)}</i>`).join("");
+    return `<div class="ses">
+      <div class="r1"><span class="sc">${pts}</span><h5>${esc(s.title)}</h5></div>
+      ${s.objective?`<div class="ob">${esc(s.objective)}</div>`:""}
+      <div class="mt">${esc(s.type)}${s.level?" · "+s.level:""} · ${(s.md||[]).join(" / ")||"any day"} · ${esc(s.players_raw||"players not stated")}</div>
+      <div class="wh">${tags}</div>
+      <button class="pg" onclick="openPage(${s.page})">Open p.${s.page} &rarr;</button>
+    </div>`;}).join("");
+}
+
+/* ============ the cloud ============
+   Local first: the JSON download and the file picker still do everything they
+   did. This is the copy that survives losing the laptop, and the way a page of
+   the bank arrives without 243 MB of PDF sitting in the folder.            */
+const cloudSay=(msg,bad)=>{const e=$("csaid");if(e){e.textContent=msg||"";e.className="said"+(bad?" bad":"");}};
+function syncSay(msg){$("sync").textContent=msg||"";}
+function markDirty(){
+  if(!cloudId||!CLOUD.user)return;              // nothing to keep in step yet
+  cloudDirty=true;syncSay("unsaved");
+  clearTimeout(cloudTimer);
+  cloudTimer=setTimeout(()=>saveToCloud(true),2500);
+}
+async function saveToCloud(quiet){
+  if(!CLOUD.on){cloudSay("No Supabase project configured — see config.js",1);return;}
+  if(!CLOUD.user){cloudSay("Sign in first",1);return;}
+  clearTimeout(cloudTimer);
+  try{
+    syncSay("saving…");if(!quiet)cloudSay("saving…");
+    cloudId=await CLOUD.saveMatch({id:cloudId,us:$("m-us").value,them:$("m-them").value,
+      date:$("m-date").value,cam,train,videoName,clips});
+    cloudDirty=false;
+    syncSay("saved "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}));
+    if(!quiet){cloudSay("Saved — "+clips.length+" clip"+(clips.length===1?"":"s")+" in the cloud");renderCloud();}
+  }catch(e){syncSay("save failed");cloudSay("Could not save — "+e.message,1);}
+}
+async function openFromCloud(id){
+  try{
+    cloudSay("opening…");
+    const m=await CLOUD.loadMatch(id);
+    clips=m.clips;cloudId=m.id;cloudDirty=false;
+    $("m-us").value=m.us;$("m-them").value=m.them;$("m-date").value=m.date;
+    if(m.cam&&Object.keys(m.cam).length)Object.assign(cam,m.cam),sync();
+    if(m.train){Object.assign(train,m.train);$("tmd").value=train.md||"";$("tsq").value=train.players||"";}
+    active=-1;answerFor(null);renderPanel();closeCloud();
+    syncSay("in step");
+    $("status").textContent=clips.length+" clips opened"+(m.videoName?" — load "+m.videoName:"");
+  }catch(e){cloudSay("Could not open — "+e.message,1);}
+}
+async function dropFromCloud(id,name){
+  if(!confirm("Delete \""+name+"\" and all its clips from the cloud? This cannot be undone."))return;
+  try{
+    await CLOUD.deleteMatch(id);
+    if(cloudId===id){cloudId=null;syncSay("local only");}
+    cloudSay("Deleted");renderCloud();
+  }catch(e){cloudSay("Could not delete — "+e.message,1);}
+}
+function openCloud(){$("cloudmodal").hidden=false;renderCloud();}
+function closeCloud(){$("cloudmodal").hidden=true;}
+$("cloudmodal").addEventListener("click",e=>{if(e.target.id==="cloudmodal")closeCloud();});
+
+let cloudEmail="";
+async function sendCode(){
+  const email=$("cmail").value.trim();
+  if(!email){cloudSay("An email address first",1);return;}
+  try{cloudSay("sending…");await CLOUD.signIn(email);cloudEmail=email;
+    renderCloud();cloudSay("Check "+email+" — open the link it contains.");
+  }catch(e){cloudSay("Could not send — "+e.message,1);}
+}
+async function useCode(){
+  try{cloudSay("checking…");await CLOUD.verify(cloudEmail||$("cmail").value.trim(),$("ccode").value);
+  }catch(e){cloudSay("That code did not work — "+e.message,1);}
+}
+async function leaveCloud(){await CLOUD.signOut();cloudId=null;syncSay("");renderCloud();}
+
+async function renderCloud(){
+  const b=$("cbody");if(!b||$("cloudmodal").hidden)return;
+  if(!CLOUD.configured){
+    b.innerHTML=`<h4>Not set up</h4><p>Nothing is configured, so both tools are running as plain local files —
+      which is a perfectly good way to use them. To add a cloud copy, put your project URL and anon key in
+      <b>config.js</b>, then run the migration in <b>supabase/migrations</b>.</p>`;return;
+  }
+  if(!CLOUD.user){
+    b.innerHTML=`<h4>Sign in</h4>
+      <p>Your matches are private to you. We email a link — open it on this machine and you land back here, signed in. No password to keep.</p>
+      <div class="row"><input id="cmail" type="email" placeholder="you@club.com" value="${esc(cloudEmail)}">
+        <button class="btn" onclick="sendCode()">Email me a link</button></div>
+      <div class="row"><input id="ccode" type="text" inputmode="numeric" placeholder="code, if your mail sends one">
+        <button class="btn g" onclick="useCode()">Sign in</button></div>
+      <div class="said" id="csaid"></div>
+      <p style="font-size:11.5px;color:var(--ink-3)">The code box is for projects with their own SMTP, which send a code beside the link. On the free plan, with Supabase&rsquo;s own mail, only the link arrives &mdash; and no more than a couple of mails an hour.</p>`;
+    return;
+  }
+  b.innerHTML=`<h4>Signed in</h4>
+    <div class="row"><span style="flex:1;font-size:13px">${esc(CLOUD.email)}</span>
+      <button class="btn g" onclick="leaveCloud()">Sign out</button></div>
+    <div class="row"><button class="btn" onclick="saveToCloud()">${cloudId?"Save this match again":"Save this match to the cloud"}</button>
+      ${cloudId?`<span style="font:10px var(--mono);color:var(--ink-3)">kept in step as you tag</span>`:""}</div>
+    <div class="said" id="csaid"></div>
+    <h4>Your matches</h4><div class="mlist" id="mlist">loading…</div>`;
+  try{
+    const rows=await CLOUD.listMatches();
+    $("mlist").innerHTML=rows.length?rows.map(m=>{
+      const name=((m.played_on?m.played_on+" ":"")+(m.us||"Us")+" vs "+(m.them||"Opponent"));
+      return `<div class="mrow">
+        <div class="nm"><b>${esc(name)}${m.id===cloudId?" ·":""}</b>
+          <span>${m.clips} clip${m.clips===1?"":"s"} · ${new Date(m.updated_at).toLocaleDateString()}${m.video_name?" · "+esc(m.video_name):""}</span></div>
+        <button onclick="openFromCloud('${m.id}')">Open</button>
+        <button class="dg" onclick="dropFromCloud('${m.id}','${esc(name).replace(/'/g,"")}')">Delete</button>
+      </div>`;}).join(""):`<div class="mrow"><div class="nm"><span>nothing saved yet</span></div></div>`;
+  }catch(e){$("mlist").innerHTML=`<div class="mrow"><div class="nm"><span>could not list — ${esc(e.message)}</span></div></div>`;}
+}
+
+/* the header reflects who is signed in, whatever caused the change */
+CLOUD.onChange(u=>{
+  $("cloudbtn").classList.toggle("in",!!u);
+  $("cloudbtn").textContent=u?"Cloud ✓":"Cloud";
+  if(!u)syncSay("");
+  renderCloud();
+});
 
 /* ============ save / load / export ============ */
 const matchName=()=>{
@@ -654,7 +1002,7 @@ function dl(name,text,mime){
   a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
 }
 const saveWork=()=>dl(slug(matchName())+"-tagging.json",
-  JSON.stringify({match:{us:$("m-us").value,them:$("m-them").value,date:$("m-date").value},cam,clips},null,1),"application/json");
+  JSON.stringify({match:{us:$("m-us").value,them:$("m-them").value,date:$("m-date").value},cam,train,clips},null,1),"application/json");
 $("loadwork").onchange=e=>{
   const f=e.target.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{
@@ -662,6 +1010,8 @@ $("loadwork").onchange=e=>{
     clips=(d.clips||[]).map(c=>({...c,themes:c.themes||(c.theme?[c.theme]:[])}));
     if(d.match){$("m-us").value=d.match.us||"";$("m-them").value=d.match.them||"";$("m-date").value=d.match.date||"";}
     if(d.cam)Object.assign(cam,d.cam),sync();
+    if(d.train){Object.assign(train,d.train);$("tmd").value=train.md||"";$("tsq").value=train.players||"";}
+    cloudId=null;cloudDirty=false;syncSay("");
     active=-1;renderPanel();$("status").textContent=clips.length+" clips loaded";
   }catch(err){$("status").textContent="Not a saved session file";}};
   r.readAsText(f);
@@ -672,6 +1022,14 @@ function exportMd(){
   clips.forEach(c=>{(c.themes||[]).forEach(t=>themes[t]=(themes[t]||0)+1);
     moments[c.moment]=(moments[c.moment]||0)+1;if(c.verdict==="bad")bad++;});
   const top=Object.entries(themes).sort((a,b)=>b[1]-a[1]),pattern=top.filter(([,n])=>n>=3);
+  /* for each pattern, what the bank offers against it */
+  const forTheme=th=>{
+    const cs=clips.filter(c=>(c.themes||[]).includes(th));
+    const uniq=f=>[...new Set(cs.map(f).filter(Boolean))];
+    return {levels:uniq(c=>c.level),
+            rows:rankSessions({moments:uniq(c=>c.moment),phases:uniq(c=>c.phase),themes:[th],
+                               levels:uniq(c=>c.level),md:train.md,players:train.players}).slice(0,3)};
+  };
   const md=`---
 tags: [type/match, analysis/game]
 opponent: "${$("m-them").value.trim()}"
@@ -696,16 +1054,18 @@ By moment: ${Object.entries(moments).sort((a,b)=>b[1]-a[1]).map(([m,n])=>`${m} $
 > 3+ clips, or 2+ matches. Below that it is an event, not a [[Schemes|scheme]] — leave it out of the report.
 
 ## Findings → training
-${pattern.length?`| Finding | Whose problem | Day | Session query |
+${pattern.length?`| Finding | Whose problem | Day | Sessions to run |
 |---|---|---|---|
-${pattern.map(([t,n])=>`| ${t} — ${n} clips | IFP / LGF / UCF | | \`theme.contains("${t}")\` |`).join("\n")}`:`_Nothing cleared the frequency rule yet._`}
+${pattern.map(([t,n])=>{const f=forTheme(t);
+  return `| ${t} — ${n} clips | ${f.levels.join(" / ")||"IFP / LGF / UCF"} | ${train.md||"any day"} | ${f.rows.length?f.rows.map(r=>`${r.s.title} (p.${r.s.page})`).join("<br>"):"nothing in the bank matched"} |`;
+}).join("\n")}`:`_Nothing cleared the frequency rule yet._`}
 
 Take each row through [[From Analysis to Training]].
 
 ## Clip log
-| Clip | Who | Phase | Moment | Themes | Player | Verdict | Frame | Note |
-|---|---|---|---|---|---|---|---|---|
-${clips.map(c=>`| ${fmt(c.t)} | ${c.team} | ${c.phase} | ${c.moment} | ${(c.themes||[]).join(", ")} | ${c.player||""} | ${c.verdict} | ${c.img?"![["+c.img+"]]":""} | ${(c.note||"").replace(/\|/g,"/")} |`).join("\n")}
+| Clip | Who | Phase | Moment | Level | Themes | Player | Verdict | Frame | Note |
+|---|---|---|---|---|---|---|---|---|---|
+${clips.map(c=>`| ${fmt(c.t)} | ${c.team} | ${c.phase} | ${c.moment} | ${c.level||""} | ${(c.themes||[]).join(", ")} | ${c.player||""} | ${c.verdict} | ${c.img?"![["+c.img+"]]":""} | ${(c.note||"").replace(/\|/g,"/")} |`).join("\n")}
 
 ## Related
 - [[Video Analysis Workflow]] · [[Post-Game Analysis]] · [[Session Bank]] · [[Tag Vocabulary]]
@@ -716,7 +1076,9 @@ ${clips.map(c=>`| ${fmt(c.t)} | ${c.team} | ${c.phase} | ${c.moment} | ${(c.them
 
 /* ============ keys ============ */
 addEventListener("keydown",e=>{
-  if(/^(INPUT|TEXTAREA)$/.test(e.target.tagName)){
+  if(!$("modal").hidden){if(e.key==="Escape")closePage();return;}
+  if(!$("cloudmodal").hidden){if(e.key==="Escape")closeCloud();return;}
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)){
     if(e.key==="Enter"){e.preventDefault();tag();e.target.blur();}
     return;
   }
