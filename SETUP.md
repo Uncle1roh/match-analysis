@@ -19,26 +19,49 @@ Supabase — only reset.
 
 ---
 
-## Getting yourself in
+## Running it
 
-**Sign-ups are off, and there are no accounts yet.** That is deliberate: the
-publishable key lives in `config.js`, which is in a public repo, so anyone who
-found it could otherwise have registered themselves and pulled the whole course.
-
-Give yourself an account:
+Two commands. The first has to be running before the second means anything:
 
 ```bash
-node tools/approve-coach.mjs you@yourclub.com
+node tools/serve.mjs        # http://localhost:3000
+node tools/signin-link.mjs --open
+```
+
+`serve.mjs` is not a convenience. Signing in *needs* http: the link has to come
+back to an address on the project's allow-list, and `file://` can never be one.
+Port 3000 is on that list.
+
+`signin-link.mjs` mints a sign-in link with the service key and opens it — same
+link the email would carry, without the email. Single use, an hour to live. That
+matters more than it sounds: the free mailer sends about two messages an hour, so
+the email route punishes a typo. Nothing about the account is weaker for it; the
+link is minted by a key that already has full access.
+
+Sign in once and it sticks — the session is kept in the browser and refreshes
+itself. You should not need either command again until you clear site data.
+
+## Adding somebody
+
+**Sign-ups are off.** That is deliberate: the publishable key lives in
+`config.js`, which is in a public repo, so open registration would have let
+anyone who found it pull the whole course.
+
+```bash
+node tools/approve-coach.mjs them@theirclub.com
 ```
 
 That creates the auth user and puts them on the `coaches` list, which is what
-the storage policy checks. Then open the tagger, press **Cloud**, enter the same
-address, and follow the link that arrives.
+the storage policy checks. They then open the tagger, press **Cloud**, enter the
+same address, and follow the link that arrives — or you send them one from
+`signin-link.mjs`.
 
 ```bash
 node tools/approve-coach.mjs --list                  # who has access
 node tools/approve-coach.mjs --revoke them@club.com  # take the bank away
 ```
+
+Currently approved: **didaskodeve@gmail.com**.
 
 Revoking removes the course pages, not their own coding: a coach's clips are
 their work and stay reachable to their account.

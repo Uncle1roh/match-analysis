@@ -50,9 +50,20 @@ Signed in, you also get:
   nothing else, through a URL signed for you that lapses within the hour.
 - **an email sign-in.** A link in the post, no password to keep.
 
-Sign-ups are off and nobody has an account yet — `config.js` is in a public repo,
-so open registration would have handed the course to anyone who found it. Give
-yourself access with `node tools/approve-coach.mjs you@yourclub.com`.
+Sign-ups are off — `config.js` is in a public repo, so open registration would
+have handed the course to anyone who found it. Accounts are made with
+`node tools/approve-coach.mjs them@club.com`.
+
+### Running it
+
+```bash
+node tools/serve.mjs                 # http://localhost:3000
+node tools/signin-link.mjs --open    # signs you in, no email round trip
+```
+
+The server is required, not a nicety: a sign-in link has to return to an address
+on the project's allow-list and `file://` can never be one. Sign in once and the
+session sticks.
 
 The match video is never uploaded, with or without a cloud. It is gigabytes,
 and it is yours.

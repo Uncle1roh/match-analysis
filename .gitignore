@@ -18,3 +18,6 @@ tools/split.log
 
 # Supabase CLI scratch: machine-local link state and version pins
 supabase/.temp/
+
+# a minted sign-in link is a live credential, however short-lived
+signin-link.txt
