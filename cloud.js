@@ -53,7 +53,15 @@ const CLOUD = (function () {
     get user() { return user; },
     get email() { return user ? user.email : ""; },
     ready,                                   // resolves once a stored session is restored
-    onChange(fn) { listeners.push(fn); return fn; },
+    /* Fires immediately as well as on every change. Without that first call a
+       listener registered after getSession() has already settled never runs at
+       all, and the page keeps whatever the markup said — which is how the
+       finder's sign-in button stayed a faint ghost while signed out. */
+    onChange(fn) {
+      listeners.push(fn);
+      try { fn(user); } catch (e) { console.error(e); }
+      return fn;
+    },
 
     /* ------------------------------------------------------------ auth -- */
     async signIn(email) {

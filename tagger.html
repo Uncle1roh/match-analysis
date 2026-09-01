@@ -373,7 +373,7 @@ const ctx={team:"them",phase:"attacking",moment:"progression",verdict:"neutral",
    training falls on, and how many players will be there.                   */
 const train={md:"",players:""};
 /* the cloud copy of this match, once it has one */
-let cloudId=null,cloudDirty=false,cloudTimer=null,videoName="";
+let cloudId=null,cloudDirty=false,cloudTimer=null,videoName="",pendingPage=0;
 const cam={h:.06,f0:.55,base:.040,ortho:false};
 let clips=[],shapes=[],tool="none",color="#FF7A45",fillOn=false,dashOn=false,
     draft=null,chain=null,sel=-1,drag=null,pendingImage=null,tab="clips",markerN=1,
@@ -788,6 +788,12 @@ async function openPage(n){
   const signed=await CLOUD.pageUrl(n);
   const url=signed?signed+"#view=FitH":(pdfURL?pdfURL+"#page="+n+"&view=FitH":null);
   if(!url){
+    /* say it where the click happened, not in a corner */
+    if(CLOUD.configured&&!CLOUD.user){
+      pendingPage=n;
+      $("status").textContent="sign in to open page "+n;
+      openCloud();return;
+    }
     $("status").textContent=CLOUD.user
       ? "this account is not on the training-bank list — ask to be added, or pick your own PDF"
       : BUNDLED_PDF+" is not beside this page — pick your copy";
@@ -996,6 +1002,8 @@ CLOUD.onChange(u=>{
   $("cloudbtn").textContent=u?"Cloud ✓":"Cloud";
   if(!u)syncSay("");
   renderCloud();
+  /* if a page was what you were after, go and get it */
+  if(u&&pendingPage){const n=pendingPage;pendingPage=0;closeCloud();openPage(n);}
 });
 
 /* ============ save / load / export ============ */

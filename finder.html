@@ -134,6 +134,7 @@ footer{margin-top:34px;font:11px/1.8 var(--mono);color:var(--ink-3);letter-spaci
     <div class="mhead"><b>Sign in</b><span class="grow"></span>
       <button class="pick ghost" onclick="closeSign()">Close &times;</button></div>
     <div style="padding:18px">
+      <p id="signwhy" hidden style="margin:0 0 12px;padding:10px 12px;background:var(--chalk);border-left:3px solid var(--hit);font-size:13px;color:var(--ink);line-height:1.5"></p>
       <p style="margin:0 0 14px;font-size:13px;color:var(--ink-2);line-height:1.55">Signing in serves each session page
         straight from the bank &mdash; one page at a time, instead of keeping the whole PDF beside this file.</p>
       <div style="display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap">
@@ -143,6 +144,7 @@ footer{margin-top:34px;font:11px/1.8 var(--mono);color:var(--ink-3);letter-spaci
         <input id="scode" type="text" inputmode="numeric" placeholder="code, if your mail sends one" style="flex:1;min-width:170px;font:13px var(--cond);padding:9px 10px;border:1px solid var(--rule);background:var(--chalk);border-radius:2px">
         <button class="pick ghost" onclick="useCode()">Sign in</button></div>
       <div id="ssaid" style="font-size:12px;color:var(--ink-2);min-height:18px"></div>
+      <button class="pick ghost" style="margin-top:4px" onclick="closeSign();document.getElementById('pdffile').click()">Use my own PDF instead</button>
       <p style="margin:10px 0 0;font-size:11.5px;color:var(--ink-3)">Open the link the mail contains. The code box only fills in for
         projects with their own SMTP; on the free plan Supabase sends the link alone, a couple of mails an hour at most.</p>
       <p style="margin:8px 0 0;font-size:11.5px;color:var(--ink-3)">Or close this and keep using your own copy of the PDF &mdash;
@@ -313,9 +315,12 @@ async function openPage(n){
   const signed=await CLOUD.pageUrl(n);
   const url=signed?signed+"#view=FitH":(pdfURL?pdfURL+"#page="+n+"&view=FitH":null);
   if(!url){
-    document.getElementById("pdfname").textContent=CLOUD.user
-      ? "this account is not on the training-bank list \u2014 ask to be added, or choose your own PDF"
-      : "no PDF here and not signed in \u2014 do either and pages open";
+    /* No silent failures: ask for what is missing, then finish the job. */
+    pendingPage=n;
+    if(!CLOUD.configured){ document.getElementById("pdffile").click(); return; }
+    openSign(CLOUD.user
+      ? "Page "+n+" is in the session bank, and this account is not on the list for it yet. Ask to be added \u2014 or use your own copy of the PDF."
+      : "Sign in to open page "+n+" from the session bank. Or use your own copy of the PDF instead.");
     return;
   }
   document.getElementById("mtitle").textContent="Page "+n;
@@ -328,11 +333,23 @@ async function openPage(n){
 }
 
 /* ---- signing in, only ever to reach the bank ---- */
-let signEmail="";
+let signEmail="",pendingPage=0;
 const $=id=>document.getElementById(id);
 const said=(m,bad)=>{const e=$("ssaid");if(e){e.textContent=m||"";e.style.color=bad?"#C2582F":"var(--ink-2)";}};
-function cloudSign(){ if(CLOUD.user){CLOUD.signOut();} else {$("signmodal").hidden=false;said("");} }
-function closeSign(){$("signmodal").hidden=true;}
+function cloudSign(){ if(CLOUD.user){CLOUD.signOut();} else openSign(""); }
+function openSign(why){
+  $("signwhy").textContent=why||"";
+  $("signwhy").hidden=!why;
+  $("signmodal").hidden=false;
+  said("");
+  setTimeout(()=>{try{$("smail").focus();}catch(e){}},60);
+}
+function closeSign(){$("signmodal").hidden=true;pendingPage=0;}
+/* signing in is a means to an end here \u2014 finish what was asked for */
+function resumePending(){
+  if(!pendingPage||!CLOUD.user)return;
+  const n=pendingPage;pendingPage=0;$("signmodal").hidden=true;openPage(n);
+}
 async function sendCode(){
   const email=$("smail").value.trim();
   if(!email){said("An email address first",1);return;}
@@ -348,8 +365,11 @@ async function useCode(){
 CLOUD.onChange(u=>{
   const b=$("signbtn");
   b.hidden=!CLOUD.configured;
-  b.textContent=u?"Signed in as "+u.email:"Sign in for the session bank";
+  b.textContent=u?"Signed in as "+u.email:"Sign in to open session pages";
+  /* solid while signed out: it is the thing between you and a page */
+  b.className=u?"pick ghost":"pick";
   sayPdf();
+  resumePending();
 });
 function closePage(){
   document.getElementById("modal").hidden=true;

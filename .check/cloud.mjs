@@ -131,7 +131,8 @@ const CFG = { url: 'https://fake.supabase.co', anonKey: 'anon-key' };
   await settle();
 
   okay('the finder offers a sign-in when configured', !$('signbtn').hidden, 'button hidden');
-  is('and labels it plainly', $('signbtn').textContent, 'Sign in for the session bank');
+  is('and labels it plainly', $('signbtn').textContent, 'Sign in to open session pages');
+  is('and makes it solid while signed out', $('signbtn').className, 'pick');
 
   E('cloudSign()'); await settle();
   $('smail').value = 'coach@club.com';
