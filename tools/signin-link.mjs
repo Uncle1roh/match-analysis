@@ -68,8 +68,16 @@ console.log('Single use, good for an hour. Make sure the site is running first:'
 console.log('  node tools/serve.mjs');
 
 if (open) {
-  /* start is a cmd builtin, hence the wrapper; the empty "" is the window title */
-  execFile('cmd', ['/c', 'start', '', link], err => {
-    if (err) console.log('\n(could not open a browser — paste the link yourself)');
+  /* NOT `cmd /c start`: cmd reads & as a command separator, so it hands the
+     browser everything up to the first one and drops &type=magiclink — which
+     comes back as "Verify requires a verification type". PowerShell takes the
+     whole thing when it is single-quoted. */
+  const [cmd, args] = process.platform === 'win32'
+    ? ['powershell', ['-NoProfile', '-Command', 'Start-Process', "'" + link.replace(/'/g, "''") + "'"]]
+    : process.platform === 'darwin'
+      ? ['open', [link]]
+      : ['xdg-open', [link]];
+  execFile(cmd, args, err => {
+    if (err) console.log('\n(could not open a browser — paste the link above yourself)');
   });
 }
