@@ -177,7 +177,7 @@ everything.
 ## Checking it
 
 ```bash
-npm i --no-save --prefix .check jsdom
+npm i --no-save --prefix .check jsdom playwright-core
 node .check/smoke.mjs     # the tagger, 42 checks
 node .check/finder.mjs    # the finder, 13 checks
 node .check/cloud.mjs     # the cloud paths against a fake Supabase, 52 checks

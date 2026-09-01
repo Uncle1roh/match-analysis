@@ -143,7 +143,7 @@ There is a small jsdom harness that drives both pages headlessly — tagging, th
 lifecycle, the session shortlist, the export, the finder deep link:
 
 ```bash
-npm i --no-save --prefix .check jsdom
+npm i --no-save --prefix .check jsdom playwright-core
 node .check/smoke.mjs     # the tagger, 42 checks
 node .check/finder.mjs    # the finder, 13 checks
 node .check/cloud.mjs     # the cloud paths, 52 checks against a fake Supabase
